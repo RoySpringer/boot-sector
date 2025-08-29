@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="nl">
+  <meta charset="utf-8" />
+  <title>Code Validation Terminal</title>
+  <style>
+    body {
+      font-family: "Courier New", monospace;
+      background: #0a0a0a;
+      color: #00ff00;
+      margin: 0;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    .terminal {
+      background: #000;
+      border: 2px solid #00ff00;
+      border-radius: 8px;
+      padding: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+      box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+    }
+    .header {
+      text-align: center;
+      border-bottom: 1px solid #00ff00;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+    .ascii-art {
+      font-family: monospace;
+      white-space: pre;
+      text-align: center;
+      margin: 20px 0;
+      color: #00aa00;
+    }
+    .input-section {
+      margin: 20px 0;
+    }
+    .input-group {
+      display: flex;
+      gap: 10px;
+      margin: 10px 0;
+    }
+    input[type="text"] {
+      flex: 1;
+      background: #111;
+      border: 1px solid #00ff00;
+      color: #00ff00;
+      padding: 10px;
+      font-family: "Courier New", monospace;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #00aa00;
+      box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+    }
+    button {
+      background: #004400;
+      color: #00ff00;
+      border: 1px solid #00ff00;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-family: "Courier New", monospace;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    button:hover {
+      background: #006600;
+      box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+    }
+    .status {
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+    .status.success {
+      background: #004400;
+      border: 1px solid #00ff00;
+    }
+    .status.error {
+      background: #440000;
+      border: 1px solid #ff0000;
+      color: #ff6666;
+    }
+    .status.info {
+      background: #004444;
+      border: 1px solid #00ffff;
+      color: #00ffff;
+    }
+    .hint {
+      background: #222;
+      border-left: 3px solid #00ff00;
+      padding: 10px;
+      margin: 10px 0;
+      font-size: 14px;
+    }
+    .hidden {
+      display: none;
+    }
+    .matrix-rain {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -2;
+      opacity: 0.05;
+    }
+    .matrix-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+      opacity: 0.1;
+    }
+    .matrix-char {
+      position: absolute;
+      color: #00ff00;
+      font-size: 12px;
+      animation: matrix-fall 3s linear infinite;
+    }
+    @keyframes matrix-fall {
+      0% {
+        transform: translateY(-100vh);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(100vh);
+        opacity: 0;
+      }
+    }
+    .progress-bar {
+      width: 100%;
+      height: 20px;
+      background: #111;
+      border: 1px solid #00ff00;
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 10px 0;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #00ff00, #00aa00);
+      width: 0%;
+      transition: width 0.5s;
+    }
+    .validation-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 5px;
+      margin: 20px 0;
+      background: #111;
+      padding: 10px;
+      border-radius: 4px;
+    }
+    .validation-cell {
+      background: #222;
+      border: 1px solid #333;
+      padding: 8px;
+      text-align: center;
+      font-size: 12px;
+      min-height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+    }
+    .validation-cell input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: #00ff00;
+      text-align: center;
+      font-family: "Courier New", monospace;
+      font-size: 12px;
+      outline: none;
+    }
+    .validation-cell input:focus {
+      background: #333;
+    }
+    .validation-cell.correct {
+      background: #004400;
+      border-color: #00ff00;
+    }
+    .validation-cell.incorrect {
+      background: #333;
+      border-color: #666;
+    }
+    .validation-cell.pending {
+      background: #333;
+      border-color: #666;
+    }
+    .code-result {
+      background: #111;
+      border: 1px solid #00ff00;
+      padding: 15px;
+      margin: 20px 0;
+      text-align: center;
+      border-radius: 4px;
+    }
+    .code-result h3 {
+      margin: 0 0 10px 0;
+      color: #00ff00;
+    }
+    .code-display {
+      font-size: 24px;
+      font-weight: bold;
+      color: #00ff00;
+      letter-spacing: 2px;
+      margin: 10px 0;
+    }
+  </style>
+  <body>
+    <div class="matrix-bg" id="matrix-bg"></div>
+    <div class="matrix-rain" id="matrix-rain"></div>
+
+    <div class="terminal">
+      <div class="header">
+        <h1>🔐 CODE VALIDATION TERMINAL v1.0 🔐</h1>
+        <p>Root access verification required</p>
+      </div>
+
+      <div class="ascii-art">
+        <pre>
+          ╔══════════════════════════════════════════════════════════════╗
+          ║                  ROOT ACCESS VALIDATION                      ║
+          ║ ████████████████████████████████████████████████████████████ ║
+          ║ █░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░█ ║
+          ║ █░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░█ ║
+          ║ █░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░█ ║
+          ║ ████████████████████████████████████████████████████████████ ║
+          ╚══════════════════════════════════════════════════════════════╝
+        </pre>
+      </div>
+
+      <div class="hint" id="current-hint">
+        <strong>🔍 VALIDATION READY:</strong> Fill in the validation cells to
+        generate your access code.
+      </div>
+
+      <div class="validation-grid" id="validation-grid">
+        <div class="validation-cell pending" data-segment="1">
+          <input type="text" placeholder="SEG1" maxlength="10" data-index="0" />
+        </div>
+        <div class="validation-cell pending" data-segment="2">
+          <input type="text" placeholder="SEG2" maxlength="10" data-index="1" />
+        </div>
+        <div class="validation-cell pending" data-segment="3">
+          <input type="text" placeholder="SEG3" maxlength="10" data-index="2" />
+        </div>
+        <div class="validation-cell pending" data-segment="4">
+          <input type="text" placeholder="SEG4" maxlength="10" data-index="3" />
+        </div>
+        <div class="validation-cell pending" data-segment="5">
+          <input type="text" placeholder="SEG5" maxlength="10" data-index="4" />
+        </div>
+      </div>
+
+      <div class="code-result" id="code-result">
+        <h3>🔢 GENERATED ACCESS CODE</h3>
+        <div class="code-display" id="code-display">****</div>
+        <p>Enter values in the validation cells above to generate your code</p>
+      </div>
+
+      <div class="input-section">
+        <div class="input-group">
+          <button onclick="clearAll()">Clear All</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Matrix background effect
+      function createMatrixEffect() {
+        const bg = document.getElementById("matrix-bg");
+        const chars =
+          "01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
+
+        setInterval(() => {
+          const char = document.createElement("div");
+          char.className = "matrix-char";
+          char.textContent = chars[Math.floor(Math.random() * chars.length)];
+          char.style.left = Math.random() * 100 + "%";
+          char.style.animationDelay = Math.random() * 3 + "s";
+          bg.appendChild(char);
+
+          setTimeout(() => char.remove(), 3000);
+        }, 100);
+      }
+
+      // Matrix rain effect
+      function createMatrixRain() {
+        const rain = document.getElementById("matrix-rain");
+        const messages = [
+          "VALIDATION REQUIRED",
+          "ACCESS CODE",
+          "ROOT ACCESS",
+          "CORE SYSTEM",
+          "VALIDATION GRID",
+          "SEGMENT VERIFICATION",
+        ];
+
+        setInterval(() => {
+          const message = document.createElement("div");
+          message.style.position = "absolute";
+          message.style.color = "#00ff00";
+          message.style.fontSize = "10px";
+          message.style.left = Math.random() * 100 + "%";
+          message.style.top = "-20px";
+          message.style.opacity = "0.3";
+          message.style.pointerEvents = "none";
+          message.textContent =
+            messages[Math.floor(Math.random() * messages.length)];
+          rain.appendChild(message);
+
+          // Animate falling
+          let pos = -20;
+          const fall = setInterval(() => {
+            pos += 1;
+            message.style.top = pos + "px";
+            if (pos > window.innerHeight) {
+              clearInterval(fall);
+              message.remove();
+            }
+          }, 50);
+        }, 2000);
+      }
+
+      // Secret code (hidden from user)
+      const secretCode = "ROOT-BYTE-CRYPTO-NOVA-CORE";
+      const correctFourDigitCode = "1337"; // The correct 4-digit code
+
+      // Generate 4-digit code based on input
+      function generateCode() {
+        const inputs = document.querySelectorAll("#validation-grid input");
+        const codeDisplay = document.getElementById("code-display");
+        const status = document.getElementById("status");
+
+        // Get all input values
+        const inputValues = Array.from(inputs).map((input) =>
+          input.value.trim().toUpperCase()
+        );
+        const combinedInput = inputValues.join("-");
+
+        // Check if the secret code was entered
+        if (combinedInput === secretCode) {
+          // Show the correct 4-digit code
+          codeDisplay.textContent = correctFourDigitCode;
+
+          // Mark all cells as correct
+          inputs.forEach((input, index) => {
+            const cell = input.parentElement;
+            cell.className = "validation-cell correct";
+          });
+        } else {
+          // Generate a random 4-digit code that is never the correct one
+          let randomCode;
+          do {
+            randomCode = Math.floor(1000 + Math.random() * 9000).toString();
+          } while (randomCode === correctFourDigitCode);
+
+          codeDisplay.textContent = randomCode;
+
+          // Update progress
+          const progress = Math.floor(
+            (correctSegments / expectedSegments.length) * 100
+          );
+        }
+      }
+
+      // Clear all inputs
+      function clearAll() {
+        const inputs = document.querySelectorAll("#validation-grid input");
+        inputs.forEach((input) => {
+          input.value = "";
+          const cell = input.parentElement;
+          cell.className = "validation-cell pending";
+        });
+
+        document.getElementById("code-display").textContent = "****";
+        document.getElementById("progress-fill").style.width = "0%";
+        document.getElementById("status").textContent = "";
+        document.getElementById("success-message").classList.add("hidden");
+      }
+
+      // Show status message
+      function showStatus(message, type) {
+        const status = document.getElementById("status");
+        status.textContent = message;
+        status.className = `status ${type}`;
+      }
+
+      // Initialize everything
+      document.addEventListener("DOMContentLoaded", () => {
+        createMatrixEffect();
+        createMatrixRain();
+
+        // Add event listeners to inputs
+        const inputs = document.querySelectorAll("#validation-grid input");
+        inputs.forEach((input) => {
+          input.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") {
+              generateCode();
+            }
+          });
+
+          input.addEventListener("input", () => {
+            // Auto-generate code when all fields have values
+            const allFilled = Array.from(inputs).every(
+              (input) => input.value.trim() !== ""
+            );
+            if (allFilled) {
+              generateCode();
+            }
+          });
+        });
+
+        // Add console hints
+        console.log(
+          "%c🔐 CODE VALIDATION TERMINAL 🔐",
+          "color: #00ff00; font-size: 20px; font-weight: bold;"
+        );
+        console.log(
+          "%cType 'help()' in console for assistance",
+          "color: #00aa00; font-size: 14px;"
+        );
+
+        // Add global help function
+        window.help = function () {
+          console.log(
+            "%c=== VALIDATION ASSISTANCE ===",
+            "color: #00ff00; font-weight: bold;"
+          );
+          console.log(
+            "%cFill in the validation cells to generate your access code",
+            "color: #00aa00;"
+          );
+          console.log(
+            "%cThe correct 4-digit code is generated when everthing is filled",
+            "color: #00aa00;"
+          );
+          console.log(
+            "%cEach cell represents a segment of the validation process",
+            "color: #00aa00;"
+          );
+        };
+
+        // Add keyboard shortcuts
+        document.addEventListener("keydown", (e) => {
+          // Ctrl+Shift+G for generate
+          if (e.ctrlKey && e.shiftKey && e.key === "G") {
+            e.preventDefault();
+            generateCode();
+          }
+          // Ctrl+Shift+C for clear
+          if (e.ctrlKey && e.shiftKey && e.key === "C") {
+            e.preventDefault();
+            clearAll();
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
