@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="nl">
+  <meta charset="utf-8" />
+  <title>Boot Sector</title>
+  <style>
+    body {
+      font-family: system-ui;
+      margin: 24px;
+    }
+    .card {
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 16px;
+      max-width: 720px;
+    }
+    .muted {
+      color: #666;
+      font-size: 0.95rem;
+    }
+    .hidden {
+      display: none;
+    }
+    .binary-display {
+      background: #f5f5f5;
+      padding: 12px;
+      border-radius: 6px;
+      font-family: monospace;
+      margin-bottom: 16px;
+    }
+    .input-group {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    input[type="text"] {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    button {
+      padding: 8px 16px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    .error {
+      color: #dc3545;
+      font-size: 14px;
+      margin-top: 8px;
+    }
+    .success {
+      color: #28a745;
+      font-size: 14px;
+      margin-top: 8px;
+    }
+  </style>
+  <body>
+    <div class="card">
+      <h1>Boot Sector</h1>
+      <p class="muted">De build is corrupt. Decodeer de boot-message.</p>
+      <!-- DevNote: rot13("FRPERG: CREFBA VF GBTRG") => "SECRET: PERSON IS TOGET" -->
+      <div class="binary-display" id="binary-display">
+        01010011 01100011 01100001 01101110 00100000 01110100 01101000 01100101
+        00100000 01001101 01100101 01101101 01101111 01110010 01111001
+      </div>
+      <div class="input-group">
+        <input
+          type="text"
+          id="user-input"
+          placeholder="Voer je gedecodeerde bericht in..."
+        />
+        <button id="decode">Decodeer</button>
+      </div>
+      <p id="message" class="hidden"></p>
+      <p id="next-step" class="hidden"></p>
+    </div>
+
+    <script>
+      // Subtiele inspect-hint (niet overal gebruiken!):
+      document.getElementById("binary-display").dataset.hint =
+        "Tip: gebruik een binary-to-text converter";
+
+      const userInput = document.getElementById("user-input");
+      const message = document.getElementById("message");
+      const nextStep = document.getElementById("next-step");
+
+      const maskedAnswer = "U2NhbiB0aGUgTWVtb3J5";
+      const maskedUrl = "aHR0cHM6Ly9jb2RlcGVuLmlvL01vNEgvcGVuL1hKbVBvd1I=";
+
+      const decode = (str) => atob(str);
+      const base64Encode = (str) => btoa(str);
+
+      document.getElementById("decode").onclick = () => {
+        const userAnswer = userInput.value.trim();
+
+        if (userAnswer === decode(maskedAnswer)) {
+          message.textContent =
+            "Correct! Je hebt de boot-message succesvol gedecodeerd.";
+          message.className = "success";
+          message.classList.remove("hidden");
+
+          // Show next step only if answer is correct
+          const nextUrl = decode(maskedUrl);
+          nextStep.innerHTML = `Ga naar de volgende console: <a href="${decode(
+            maskedUrl
+          )}" target="_blank" rel="noopener">Console Gate</a>`;
+          nextStep.classList.remove("hidden");
+        } else {
+          message.textContent = "Incorrect. Probeer opnieuw.";
+          message.className = "error";
+          message.classList.remove("hidden");
+          nextStep.classList.add("hidden");
+        }
+      };
+
+      // Allow Enter key to submit
+      userInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") {
+          document.getElementById("decode").click();
+        }
+      });
+    </script>
+  </body>
+</html>
