@@ -1,1 +1,1 @@
-The code branches futher are you warm or still far away.
+The code forks… but only one path leads to the root.
