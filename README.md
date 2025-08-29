@@ -1,1 +1,1 @@
-The commit trail warms… the next branch may carry heat.
+Dead branch. No loot here. Try grinding another path.
