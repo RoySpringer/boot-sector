@@ -310,6 +310,13 @@
           <h3>🎉 ACCESS GRANTED! 🎉</h3>
           <p>Segment: <strong>CRYPTO</strong></p>
           <p>You've successfully breached the quantum encryption matrix!</p>
+          <a
+            id="open-vault"
+            href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+            target="_blank"
+          >
+            <button>Open the vault</button>
+          </a>
         </div>
       </div>
     </div>
@@ -954,6 +961,8 @@
         if (input === expected) {
           showStatus("🎉 All layers breached! Access granted!", "success");
           document.getElementById("reveal").classList.remove("hidden");
+          document.getElementById("open-vault").href =
+            "https://github.com/RoySpringer/boot-sector/tree/other";
         } else {
           throw new Error("Confirmation word is is not matching `confirm`.");
           showStatus("Incorrect.", "error");

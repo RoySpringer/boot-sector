@@ -111,7 +111,9 @@
           const nextUrl = decode(maskedUrl);
           nextStep.innerHTML = `Ga naar de volgende console: <a href="${decode(
             maskedUrl
-          )}" target="_blank" rel="noopener">Console Gate</a>`;
+          )}" target="_blank" rel="noopener">Console Gate</a>
+          <p>Segment: <strong>ROOT</strong></p>
+          `;
           nextStep.classList.remove("hidden");
         } else {
           message.textContent = "Incorrect. Probeer opnieuw.";
