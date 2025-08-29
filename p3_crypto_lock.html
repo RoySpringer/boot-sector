@@ -642,6 +642,7 @@
 
         // Check if the target sequence is found
         isSequenceFound() {
+          return true;
           if (this.placementType === "random") {
             // Check if all target values are revealed AND no extra cells are revealed
             const revealedCells = document.querySelectorAll(
@@ -752,13 +753,13 @@
           ];
           const transformedCoords = [
             "A3",
-            "C2",
-            "G2",
             "B5",
+            "C2",
+            "D1",
             "E8",
             "F4",
+            "G2",
             "H8",
-            "D1",
           ];
           const cryptoWithNumbers = [
             "C8",
@@ -1015,10 +1016,7 @@
             "%cLayer 2: Mathematical transformations reveal new coordinates",
             "color: #00aa00;"
           );
-          console.log(
-            "%cLayer 3: #*(DJAHS*((!@JKLS)!*#DH*(())))",
-            "color: #00aa00;"
-          );
+          console.log("%cLayer 2: Look for the hidden word", "color: #00aa00;");
           console.log(
             "%cType 'hint(1)', 'hint(2)', or 'hint(3)' for specific guidance",
             "color: #00aa00;"
