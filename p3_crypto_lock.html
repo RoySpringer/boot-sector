@@ -340,45 +340,6 @@
         }, 100);
       }
 
-      // Matrix rain effect with hidden messages
-      function createMatrixRain() {
-        const rain = document.getElementById("matrix-rain");
-        const messages = [
-          "A1→B2→C3→D4→E5→F6→G7→H8",
-          "A+2=C, C-1=B, G-5=B, B+3=E",
-          "C-R-Y-P-T-O-L-K",
-          "CONFIRM",
-          "DIAGONAL PATH",
-          "TRANSFORMATION",
-          "CRYPTO WORD",
-        ];
-
-        setInterval(() => {
-          const message = document.createElement("div");
-          message.style.position = "absolute";
-          message.style.color = "#00ff00";
-          message.style.fontSize = "10px";
-          message.style.left = Math.random() * 100 + "%";
-          message.style.top = "-20px";
-          message.style.opacity = "0.3";
-          message.style.pointerEvents = "none";
-          message.textContent =
-            messages[Math.floor(Math.random() * messages.length)];
-          rain.appendChild(message);
-
-          // Animate falling
-          let pos = -20;
-          const fall = setInterval(() => {
-            pos += 1;
-            message.style.top = pos + "px";
-            if (pos > window.innerHeight) {
-              clearInterval(fall);
-              message.remove();
-            }
-          }, 50);
-        }, 2000);
-      }
-
       // Mouse hover hint system
       function setupMouseHints() {
         const hint1 = document.getElementById("cryptic-hint-1");
@@ -391,6 +352,7 @@
         header.classList.add("hint-trigger");
         header.addEventListener("mouseenter", (e) => {
           hintId = setTimeout(() => {
+            if (!hint1) return;
             hint1.style.left = e.pageX + 10 + "px";
             hint1.style.top = e.pageY + 10 + "px";
             hint1.classList.add("show");
@@ -398,29 +360,8 @@
         });
         header.addEventListener("mouseleave", () => {
           clearTimeout(hintId);
+          if (!hint1) return;
           hint1.classList.remove("show");
-        });
-
-        const progressBar = document.querySelector(".progress-bar");
-        progressBar.classList.add("hint-trigger");
-        progressBar.addEventListener("mouseenter", (e) => {
-          hint2.style.left = e.pageX + 10 + "px";
-          hint2.style.top = e.pageY + 10 + "px";
-          hint2.classList.add("show");
-        });
-        progressBar.addEventListener("mouseleave", () => {
-          hint2.classList.remove("show");
-        });
-
-        const asciiArt = document.querySelector(".ascii-art");
-        asciiArt.classList.add("hint-trigger");
-        asciiArt.addEventListener("mouseenter", (e) => {
-          hint3.style.left = e.pageX + 10 + "px";
-          hint3.style.top = e.pageY + 10 + "px";
-          hint3.classList.add("show");
-        });
-        asciiArt.addEventListener("mouseleave", () => {
-          hint3.classList.remove("show");
         });
       }
 
@@ -642,7 +583,6 @@
 
         // Check if the target sequence is found
         isSequenceFound() {
-          return true;
           if (this.placementType === "random") {
             // Check if all target values are revealed AND no extra cells are revealed
             const revealedCells = document.querySelectorAll(
@@ -830,18 +770,7 @@
 
           // Step 1: Check for sequential pattern (A1, B2, C3, D4, E5, F6, G7, H8)
           const revealedSequential = layer1Grid.getRevealedTargetValues();
-
-          // Debug: Log what's found
-          console.log("Sequential pattern found:", revealedSequential);
-          console.log(
-            "All revealed values:",
-            Array.from(document.querySelectorAll(".crypto-cell.revealed")).map(
-              (cell) => cell.dataset.value
-            )
-          );
-
-          // Step 1 progress: 0-8 correct sequential values = 0-33% progress
-          progress = Math.floor((revealedSequential.length / 8) * 33);
+          progress = Math.floor((revealedSequential.length / 8) * 100);
 
           if (revealedSequential.length === 8) {
             if (!document.querySelector('[data-progress="step1"]')) {
@@ -1063,7 +992,6 @@
         });
 
         // Initialize cryptic hint systems
-        createMatrixRain();
         setupMouseHints();
       });
 
