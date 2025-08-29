@@ -1,1 +1,1 @@
-The code forks… but only one path leads to the root.
+Did you really think it was this easy to find the secret?
