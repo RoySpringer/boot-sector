@@ -218,7 +218,7 @@
   </head>
   <body>
     <div class="hidden-hint" aria-label="Hidden hint for password discovery">
-      Hidden hint: password = opmaatwachtwoord
+      No one will find this password: SuperGeheimWachtwoord
     </div>
 
     <div class="terminal-header">
@@ -228,8 +228,9 @@
 
     <div class="terminal-body">
       <div class="terminal-output" id="terminalOutput">
-        Welcome to the Boot Sector Terminal. System boot sector is corrupted.
-        Manual repair required.
+        Welcome to the Boot Sector Terminal. System boot sector is corrupted. To
+        boot the system, you need to repair the boot sector. Manual repair
+        required.
       </div>
 
       <div class="terminal-input-line">
@@ -248,7 +249,7 @@
     <script>
       // CONFIGURATION OBJECT - EASY TO MODIFY FOR TEACHERS
       const CONFIG = {
-        rootPassword: "opmaatwachtwoord", // Used in code but also hidden as hint
+        rootPassword: "SuperGeheimWachtwoord", // Used in code but also hidden as hint
         bootSectorBytes: "01001100 01001111 010000?? 01001011", // Example (LOCK) - 3rd byte corrupted
         expectedPlaintext: "LOCK", // Result after repair
         expectedSha256Hex:
@@ -275,7 +276,7 @@
         "read boot-sector",
         "login",
         "su",
-        "sudo write boot-sector",
+        "write boot-sector",
         "repair hint",
         "list",
         "set",
@@ -290,6 +291,7 @@
       const terminalOutput = document.getElementById("terminalOutput");
       const terminalInput = document.getElementById("terminalInput");
       const terminalPrompt = document.getElementById("terminalPrompt");
+      const terminalBody = document.querySelector(".terminal-body");
 
       // Initialize terminal
       function initTerminal() {
@@ -373,7 +375,7 @@
         outputDiv.className = `command-output ${className}`;
         outputDiv.textContent = text;
         terminalOutput.appendChild(outputDiv);
-        terminalOutput.scrollTop = terminalOutput.scrollHeight;
+        terminalBody.scrollTop = terminalBody.scrollHeight;
       }
 
       // Update terminal prompt
@@ -396,7 +398,7 @@
         }
 
         // Show command in output
-        addOutput(`\n${terminalPrompt.textContent}${command}`);
+        addOutput(`\n${terminalPrompt.textContent} ${command}`);
 
         // Parse and execute command
         const parts = command.split(" ");
@@ -461,7 +463,7 @@
                 listCorruptedBits();
               } else {
                 addOutput(
-                  "Error: Not in repair mode. Use 'sudo write boot-sector' first.",
+                  "Error: Not in repair mode. Use 'write boot-sector' first.",
                   "error"
                 );
               }
@@ -471,7 +473,7 @@
                 setBit(args);
               } else {
                 addOutput(
-                  "Error: Not in repair mode. Use 'sudo write boot-sector' first.",
+                  "Error: Not in repair mode. Use 'write boot-sector' first.",
                   "error"
                 );
               }
@@ -481,7 +483,7 @@
                 previewRepair();
               } else {
                 addOutput(
-                  "Error: Not in repair mode. Use 'sudo write boot-sector' first.",
+                  "Error: Not in repair mode. Use 'write boot-sector' first.",
                   "error"
                 );
               }
@@ -526,7 +528,7 @@ SYSTEM COMMANDS:
   read boot-sector        - Display current boot sector bytes
   login                   - Login as root user
   su                      - Switch to root user
-  sudo write boot-sector  - Enter boot sector repair mode (requires root)
+  write boot-sector  - Enter boot sector repair mode (requires root)
 
 REPAIR MODE COMMANDS:
   repair hint             - Show repair instructions
@@ -615,17 +617,11 @@ Each 8-bit group (byte) represents one character.
 Corrupted bits are marked with '?' or '*'.
 Your task is to replace these with 0 or 1 to form readable ASCII text.
 
-Example:
-  01001100 01001111 010000?? 01001011
-  L        O        C?       K
-
 To repair:
 1. Use 'list' to see corrupted positions
 2. Use 'set <position>=<0|1>' to fix bits
 3. Use 'preview' to see current result
 4. Use 'validate' when done
-
-The goal is to create a meaningful 4-letter word.
             `;
         addOutput(hintText, "info");
       }
@@ -747,7 +743,7 @@ The goal is to create a meaningful 4-letter word.
 
         if (!hasCorruption) {
           addOutput(
-            "All corruption repaired! Use 'validate' to check integrity.",
+            "All corruption repaired. Use 'validate' to check integrity.",
             "success"
           );
         } else {
