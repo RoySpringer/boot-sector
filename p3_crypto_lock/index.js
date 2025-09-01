@@ -1,5 +1,7 @@
 const CONFIG = {
   segmentReveal: "RlVUVVJF",
+  NEXT_URL:
+    "aHR0cHM6Ly9yb3lzcHJpbmdlci5naXRodWIuaW8vYm9vdC1zZWN0b3IvcDNfY3J5cHRvX2xvY2s=",
 };
 
 // Matrix background effect
@@ -525,8 +527,7 @@ function checkLayer3() {
   if (input === expected) {
     showStatus("🎉 All layers breached! Access granted!", "success");
     document.getElementById("reveal").classList.remove("hidden");
-    document.getElementById("open-vault").href =
-      "https://github.com/RoySpringer/boot-sector/tree/other";
+    document.getElementById("open-vault").href = atob(atob(CONFIG.NEXT_URL));
     document.querySelector(".seg").textContent = atob(CONFIG.segmentReveal);
   } else {
     throw new Error("Confirmation word is is not matching `confirm`.");
