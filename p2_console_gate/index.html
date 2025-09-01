@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <meta charset="utf-8" />
+  <title>Console Gate – Team Debug Challenge</title>
+
+  <body>
+    <div class="shell">
+      <div class="bar">
+        <div class="title">CONSOLE GATE v2 — HvA SE // BOOT RUN</div>
+        <div class="muted">TEAM MODE: 5 roles • Hash-verified</div>
+      </div>
+      <div class="body">
+        <div class="story">
+          <strong>Briefing:</strong> HvA Software Engineering boot is stuck in
+          recovery. Five tiny defects are blocking the decoder. Fix all tests
+          (one per teammate), then <em>hash-verify</em> the output to unlock the
+          next segment. Not all clues are obvious.
+        </div>
+
+        <div class="grid">
+          <div class="card">
+            <h3>🧪 Unit Tests</h3>
+            <div class="tests" id="tests"></div>
+            <div style="margin: 10px 0">
+              <div class="progress">
+                <div class="fill" id="fill"></div>
+              </div>
+            </div>
+            <div class="row">
+              <button class="btn" id="run">Run tests</button>
+              <button class="btn" id="hints">Get hint</button>
+              <span class="muted" id="score">Hints used: 0</span>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>🖥️ Console</h3>
+            <div class="terminal" id="term"></div>
+            <div class="hint" id="live-hint">
+              Tip: each test belongs to a role — Decoder, Normalizer, Sum,
+              Regex, Nth-Picker.
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top: 16px">
+          <h3>🎯 Goal & Reveal</h3>
+          <div id="reveal" class="hidden">
+            ✅ All tests passed & SHA-256 verified!<br />
+            Segment B: <span class="seg">PRESENT</span><br />
+            Next:
+            <a href="#" id="nextLink" target="_blank" rel="noopener"
+              >Crypto Lock</a
+            >
+          </div>
+          <div id="todo" class="muted">
+            Pass every test, then the segment will auto-reveal here.
+          </div>
+        </div>
+      </div>
+      <div class="footer">
+        Roles suggestion → <strong>Decoder</strong>,
+        <strong>Normalizer</strong>, <strong>Checksum</strong>,
+        <strong>Regex</strong>, <strong>Nth-Picker</strong>. Work in the JS
+        panel to fix the tiny defects below. Inspector: check comments &
+        invisible text for extra nudges.
+      </div>
+    </div>
+
+    <!-- ROT13('CERSRAG') -->
+  </body>
+</html>

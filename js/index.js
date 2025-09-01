@@ -2,12 +2,12 @@ const CONFIG = {
   rootPassword: "SuperGeheimWachtwoord", // Used in code but also hidden as hint
   bootSectorBytes:
     "010001?? 0?00111? 01000?11 01001001 010??110 0100010? 0100010? 01010???",
-  expectedPlaintext: "ENGINEER",
+  expectedText: "RU5HSU5FRVI=",
   expectedSha256Hex:
     "cafa51a40e34a9536eecbeceb8cb6ee5e961a54daa5b2ba60b00f6c9d8eaeefc",
-  segmentReveal: "SEGMENT: ENGINEER",
+  segmentReveal: `SEGMENT: ${atob("RU5HSU5FRVI=")}`,
   colors: { bg: "#0b0f10", fg: "#d2fbd4", accent: "#51ffa6" }, // Terminal style
-  nextLevel: "aHR0cHM6Ly9jb2RlcGVuLmlvL01vNEgvcGVuL1hKbVBvd1I=", // Masked URL to next level Console Gate
+  nextLevel: "aHR0cHM6Ly9jb2RlcGVuLmlvL01vNEgvcGVuL09QeWFKTU4=", // Masked URL to next level Console Gate
 };
 
 // Terminal state

@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="nl">
+  <meta charset="utf-8" />
+  <title>Crypto Lock</title>
+  <style>
+    body {
+      font-family: "Courier New", monospace;
+      background: #0a0a0a;
+      color: #00ff00;
+      margin: 0;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    .terminal {
+      background: #000;
+      border: 2px solid #00ff00;
+      border-radius: 8px;
+      padding: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+      box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+    }
+    .header {
+      text-align: center;
+      border-bottom: 1px solid #00ff00;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+    .crypto-grid {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 1px;
+      margin: 20px 0;
+      background: #111;
+      padding: 8px;
+      border-radius: 4px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+      position: relative;
+    }
+    .crypto-cell {
+      background: #222;
+      border: 1px solid #333;
+      padding: 6px;
+      text-align: center;
+      font-size: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      min-height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .coordinate-label {
+      position: absolute;
+      font-size: 8px;
+      color: #666;
+      font-weight: bold;
+    }
+    .coordinate-label.row {
+      left: -15px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    .coordinate-label.col {
+      top: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .crypto-cell:hover .coordinate-label {
+      color: #00ff00;
+    }
+    .crypto-cell:hover {
+      background: #333;
+      border-color: #00ff00;
+    }
+    .crypto-cell.revealed {
+      background: #004400;
+      border-color: #00ff00;
+      color: #fff;
+    }
+    .crypto-cell.revealed.layer2 {
+      background: #440000;
+      border-color: #ff0000;
+      color: #fff;
+    }
+    .input-section {
+      margin: 20px 0;
+    }
+    .input-group {
+      display: flex;
+      gap: 10px;
+      margin: 10px 0;
+    }
+    input[type="text"] {
+      flex: 1;
+      background: #111;
+      border: 1px solid #00ff00;
+      color: #00ff00;
+      padding: 10px;
+      font-family: "Courier New", monospace;
+      border-radius: 4px;
+    }
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #00aa00;
+      box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+    }
+    button {
+      background: #004400;
+      color: #00ff00;
+      border: 1px solid #00ff00;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-family: "Courier New", monospace;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    button:hover {
+      background: #006600;
+      box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+    }
+    .status {
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+    .status.success {
+      background: #004400;
+      border: 1px solid #00ff00;
+    }
+    .status.error {
+      background: #440000;
+      border: 1px solid #ff0000;
+      color: #ff6666;
+    }
+    .status.info {
+      background: #004444;
+      border: 1px solid #00ffff;
+      color: #00ffff;
+    }
+    .hint {
+      background: #222;
+      border-left: 3px solid #00ff00;
+      padding: 10px;
+      margin: 10px 0;
+      font-size: 14px;
+    }
+    .ascii-art {
+      font-family: monospace;
+      white-space: pre;
+      text-align: center;
+      margin: 20px 0;
+      color: #00aa00;
+    }
+    .progress-bar {
+      width: 100%;
+      height: 20px;
+      background: #111;
+      border: 1px solid #00ff00;
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 10px 0;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #00ff00, #00aa00);
+      width: 0%;
+      transition: width 0.5s;
+    }
+    .progress-fill.layer2 {
+      background: linear-gradient(90deg, #ff0000, #aa0000);
+    }
+    .hidden {
+      display: none;
+    }
+    .cryptic-hint {
+      position: absolute;
+      background: rgba(0, 0, 0, 0.9);
+      border: 1px solid #00ff00;
+      padding: 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      color: #00ff00;
+      z-index: 1000;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s;
+      max-width: 300px;
+    }
+    .cryptic-hint.show {
+      opacity: 1;
+    }
+    .hint-trigger {
+      cursor: help;
+      border-bottom: 1px dotted #00ff00;
+    }
+    .matrix-rain {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -2;
+      opacity: 0.05;
+    }
+    .matrix-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+      opacity: 0.1;
+    }
+    .matrix-char {
+      position: absolute;
+      color: #00ff00;
+      font-size: 12px;
+      animation: matrix-fall 3s linear infinite;
+    }
+    @keyframes matrix-fall {
+      0% {
+        transform: translateY(-100vh);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(100vh);
+        opacity: 0;
+      }
+    }
+  </style>
+  <body>
+    <div class="matrix-bg" id="matrix-bg"></div>
+    <div class="matrix-rain" id="matrix-rain"></div>
+
+    <!-- Hidden cryptic elements -->
+    <div class="cryptic-hint" id="cryptic-hint-1">
+      <strong>🔍 SECRET WHISPER:</strong><br />
+      The first sequence follows the path of a bishop's journey
+    </div>
+    <!-- HINT 1: The first sequence follows the diagonal path of a bishop's journey -->
+
+    <div class="terminal">
+      <div class="header">
+        <h1>🔐 CRYPTO LOCK v2.0 🔐</h1>
+        <p>Multi-layer encryption breach required</p>
+      </div>
+
+      <div class="ascii-art">
+        <pre>
+          ╔══════════════════════════════════════════════════════════════╗
+          ║                  QUANTUM ENCRYPTION MATRIX                   ║
+          ║ ████████████████████████████████████████████████████████████ ║
+          ║ █░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░█ ║
+          ║ █░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░█ ║
+          ║ █░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░█ ║
+          ║ ████████████████████████████████████████████████████████████ ║
+          ╚══════════════════════════════════════════════════════════════╝
+        </pre>
+      </div>
+
+      <div class="hint" id="current-hint">
+        <strong>🔍 INITIAL SCAN:</strong> Coordinates dance in sequence.
+      </div>
+
+      <div class="crypto-grid" id="crypto-grid"></div>
+
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+
+      <div class="input-section">
+        <div class="input-group">
+          <input
+            type="text"
+            id="layer1"
+            placeholder="Enter the sequence you found..."
+          />
+          <button onclick="checkLayer1()">Check Sequence</button>
+        </div>
+
+        <div class="input-group hidden" id="layer2-group">
+          <input
+            type="text"
+            id="layer2"
+            placeholder="Enter the crypto word you found..."
+          />
+          <button onclick="checkLayer2()">Check Crypto Word</button>
+        </div>
+
+        <div class="input-group hidden" id="layer3-group">
+          <input
+            type="text"
+            id="layer3"
+            placeholder="Enter 'confirm' to finalize..."
+          />
+          <button onclick="checkLayer3()">Finalize Breach</button>
+        </div>
+      </div>
+
+      <div id="status"></div>
+      <div id="reveal" class="hidden">
+        <div class="status success">
+          <h3>🎉 ACCESS GRANTED! 🎉</h3>
+          <p>Segment: <strong class="seg">CRYPTO</strong></p>
+          <p>You've successfully breached the quantum encryption matrix!</p>
+          <a
+            id="open-vault"
+            href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+            target="_blank"
+          >
+            <button>Open the vault</button>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <script src="index.js"></script>
+  </body>
+</html>
