@@ -1,11 +1,11 @@
-// CONFIGURATION OBJECT - EASY TO MODIFY FOR TEACHERS
 const CONFIG = {
   rootPassword: "SuperGeheimWachtwoord", // Used in code but also hidden as hint
-  bootSectorBytes: "01001100 01001111 010000?? 01001011", // Example (LOCK) - 3rd byte corrupted
-  expectedPlaintext: "LOCK", // Result after repair
+  bootSectorBytes:
+    "010001?? 0?00111? 01000?11 01001001 010??110 0100010? 0100010? 01010???",
+  expectedPlaintext: "ENGINEER",
   expectedSha256Hex:
-    "74c4812d040abf67ed4aca878fd35d5925655f1c4631b23bc63c6b5d11dd8dc5", // SHA-256 of "LOCK"
-  segmentReveal: "SEGMENT: BYTE-404",
+    "cafa51a40e34a9536eecbeceb8cb6ee5e961a54daa5b2ba60b00f6c9d8eaeefc",
+  segmentReveal: "SEGMENT: ENGINEER",
   colors: { bg: "#0b0f10", fg: "#d2fbd4", accent: "#51ffa6" }, // Terminal style
 };
 
@@ -43,6 +43,9 @@ const terminalOutput = document.getElementById("terminalOutput");
 const terminalInput = document.getElementById("terminalInput");
 const terminalPrompt = document.getElementById("terminalPrompt");
 const terminalBody = document.querySelector(".terminal-body");
+const hint = document.querySelector(".hidden-hint");
+
+hint.textContent = `No one will find this password: ${CONFIG.rootPassword}`;
 
 // Initialize terminal
 function initTerminal() {
