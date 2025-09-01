@@ -20,6 +20,24 @@
       margin: 0 auto;
       box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
     }
+    .terminal.red {
+      border-color: #ff0000;
+      box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+      animation: red-glow 2s ease-in-out infinite;
+      transition: all 0.2s;
+    }
+
+    @keyframes red-glow {
+      0% {
+        box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+      }
+      50% {
+        box-shadow: 0 0 30px rgba(255, 0, 0, 0.8);
+      }
+      100% {
+        box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+      }
+    }
     .header {
       text-align: center;
       border-bottom: 1px solid #00ff00;
@@ -234,10 +252,36 @@
         opacity: 0;
       }
     }
+    .layer-indicator {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #004400;
+      border: 1px solid #00ff00;
+      color: #00ff00;
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: bold;
+      z-index: 100;
+    }
+    .layer-indicator.layer-2 {
+      background: #440000;
+      border-color: #ff0000;
+      color: #ff6666;
+    }
+    .layer-indicator.layer-3 {
+      background: #444400;
+      border-color: #ffff00;
+      color: #ffff66;
+    }
   </style>
   <body>
     <div class="matrix-bg" id="matrix-bg"></div>
     <div class="matrix-rain" id="matrix-rain"></div>
+
+    <!-- Layer indicator -->
+    <div class="layer-indicator" id="layer-indicator">Layer 1</div>
 
     <!-- Hidden cryptic elements -->
     <div class="cryptic-hint" id="cryptic-hint-1">

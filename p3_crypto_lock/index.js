@@ -241,6 +241,9 @@ class CryptoGrid {
             `Layer 2: ${remainingClicks} wrong clicks remaining`,
             "info"
           );
+          if (remainingClicks < MAX_LAYER2_CLICKS / 2) {
+            updateHint(6);
+          }
         }
       }
     }
@@ -390,6 +393,7 @@ function switchToCryptoGrid() {
   layer2ClickCount = 0;
 
   initCryptoGrid("layer2");
+  updateLayerIndicator(2);
   showStatus(
     "Crypto grid loaded! Find the hidden word using the transformation hints. You have 8 wrong clicks remaining.",
     "success"
@@ -428,43 +432,25 @@ function updateProgress() {
       }
     }
 
-    // Step 2: Check for transformation pattern (only if step 1 is complete)
-    if (revealedSequential.length === 8) {
-      const revealedTransformed = window.transformedCoords.filter((coord) => {
-        const cell = document.querySelector(`[data-coord="${coord}"]`);
-        return cell && cell.classList.contains("revealed");
-      });
-
-      if (revealedTransformed.length === 8) {
-        progress = 66;
-        if (!document.querySelector('[data-progress="step2"]')) {
-          updateHint(3);
-          document
-            .querySelector(".crypto-grid")
-            .setAttribute("data-progress", "step2");
-        }
-      } else {
-        progress = 33; // Step 1 complete but transformation not yet found
-      }
-    }
-
     const progressFill = document.getElementById("progress-fill");
     progressFill.style.width = progress + "%";
     progressFill.classList.remove("layer2"); // Remove red theme for layer 1
   }
 }
 
-function updateHint(layer) {
+function updateHint(hintID) {
   const hintElement = document.getElementById("current-hint");
   const hints = {
-    1: "<strong>🔍 INITIAL SCAN:</strong> Coordinates dance in sequence.",
-    2: "<strong>‼️ PATTERN DETECTED:</strong> The sequence is complete. Going is high alert mode. Limited clicks are activated. Now the grid speaks in transformations. Only A real inspector can solve this.",
-    3: "<strong>TRANSFORMATION COMPLETE:</strong> System is compromised.",
+    1: "<strong>🔍 INITIAL SCAN:</strong> Coordinates dance in sequence. Only the ones that make progress are the One",
+    2: "<strong>PATTERN DETECTED: </strong> A pattern is detected.</strong>",
+    3: "<strong>‼️ TRANSFORMATION COMPLETE:</strong> System is compromised.",
     4: "<strong>FINAL DECRYPTION:</strong> The crypto word is complete. Enter it to finalize the breach sequence.",
+    5: "<strong>‼️ HIGH ALERT:</strong> The sequence is complete. Going is high alert mode. Limited clicks are activated. Now the grid speaks in transformations. Only A real inspector can solve this.",
+    6: "<strong>🔍 TRANSFORMATIONS NEEDED:</strong> Transformations are needed to solve this layer. Only A real INSPECTor can solve this.",
   };
 
-  if (hints[layer]) {
-    hintElement.innerHTML = hints[layer];
+  if (hints[hintID]) {
+    hintElement.innerHTML = hints[hintID];
   }
 }
 
@@ -490,6 +476,10 @@ function checkLayer1() {
         "success"
       );
       document.getElementById("layer2-group").classList.remove("hidden");
+      updateHint(5);
+      const progressFill = document.getElementById("progress-fill");
+      progressFill.style.width = 0 + "%";
+      document.querySelector(".terminal").classList.add("red");
     }, 2000);
   } else {
     showStatus("Incorrect pattern. Try again.", "error");
@@ -509,6 +499,7 @@ function checkLayer2() {
         "Crypto word discovered! You've successfully breached the system!",
         "success"
       );
+      updateLayerIndicator(3);
       document.getElementById("layer3-group").classList.remove("hidden");
     } else {
       showStatus("Incorrect. Try again.", "error");
@@ -540,10 +531,20 @@ function showStatus(message, type) {
   status.className = `status ${type}`;
 }
 
+// Function to update layer indicator
+function updateLayerIndicator(layer) {
+  const layerIndicator = document.getElementById("layer-indicator");
+  if (layerIndicator) {
+    layerIndicator.textContent = `Layer ${layer}`;
+    layerIndicator.className = `layer-indicator layer-${layer}`;
+  }
+}
+
 // Initialize everything
 document.addEventListener("DOMContentLoaded", () => {
   createMatrixEffect();
   initCryptoGrid(); // Default to layer1
+  updateLayerIndicator(1); // Set initial layer indicator
 
   // Allow Enter key to submit
   document.getElementById("layer1").addEventListener("keypress", (e) => {
