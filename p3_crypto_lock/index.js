@@ -527,7 +527,7 @@ function checkLayer3() {
   if (input === expected) {
     showStatus("🎉 All layers breached! Access granted!", "success");
     document.getElementById("reveal").classList.remove("hidden");
-    document.getElementById("open-vault").href = atob(atob(CONFIG.NEXT_URL));
+    document.getElementById("open-vault").href = atob(CONFIG.NEXT_URL);
     document.querySelector(".seg").textContent = atob(CONFIG.segmentReveal);
   } else {
     throw new Error("Confirmation word is is not matching `confirm`.");
