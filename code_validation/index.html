@@ -334,8 +334,10 @@
       }
 
       // Secret code (hidden from user)
-      const secretCode = "ROOT-BYTE-CRYPTO-NOVA-CORE";
-      const correctFourDigitCode = "1337"; // The correct 4-digit code
+      const secretCode = `${atob("RU5HSU5FRVI=")}-${atob(
+        "UFJFU0VOVA=="
+      )}-${atob("RlVUVVJF")}-${atob("T1JJR0lO")}-${atob("QU1TVEVSREFN")}`;
+      const correctFourDigitCode = "NDM4";
 
       // Generate 4-digit code based on input
       function generateCode() {
@@ -352,7 +354,7 @@
         // Check if the secret code was entered
         if (combinedInput === secretCode) {
           // Show the correct 4-digit code
-          codeDisplay.textContent = correctFourDigitCode;
+          codeDisplay.textContent = atob(correctFourDigitCode);
 
           // Mark all cells as correct
           inputs.forEach((input, index) => {
@@ -363,15 +365,10 @@
           // Generate a random 4-digit code that is never the correct one
           let randomCode;
           do {
-            randomCode = Math.floor(1000 + Math.random() * 9000).toString();
-          } while (randomCode === correctFourDigitCode);
+            randomCode = Math.floor(100 + Math.random() * 900).toString();
+          } while (randomCode == atob(correctFourDigitCode));
 
           codeDisplay.textContent = randomCode;
-
-          // Update progress
-          const progress = Math.floor(
-            (correctSegments / expectedSegments.length) * 100
-          );
         }
       }
 
@@ -384,7 +381,7 @@
           cell.className = "validation-cell pending";
         });
 
-        document.getElementById("code-display").textContent = "****";
+        document.getElementById("code-display").textContent = "***";
         document.getElementById("progress-fill").style.width = "0%";
         document.getElementById("status").textContent = "";
         document.getElementById("success-message").classList.add("hidden");
@@ -443,7 +440,7 @@
             "color: #00aa00;"
           );
           console.log(
-            "%cThe correct 4-digit code is generated when everthing is filled",
+            "%cThe correct code is generated when everything is filled",
             "color: #00aa00;"
           );
           console.log(
