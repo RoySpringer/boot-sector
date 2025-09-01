@@ -214,6 +214,38 @@
         white-space: nowrap;
         border: 0;
       }
+
+      /* Next level link styling */
+      .next-level-link {
+        display: inline-block;
+        background: linear-gradient(45deg, #51ffa6, #00aa00);
+        color: #0b0f10 !important;
+        padding: 12px 24px;
+        border: 2px solid #51ffa6;
+        border-radius: 8px;
+        text-decoration: none !important;
+        font-weight: bold;
+        font-size: 16px;
+        margin: 16px 0;
+        transition: all 0.3s ease;
+        animation: pulse 2s infinite;
+      }
+
+      .next-level-link:hover {
+        background: linear-gradient(45deg, #00aa00, #51ffa6);
+        box-shadow: 0 0 20px rgba(81, 255, 166, 0.5);
+        transform: translateY(-2px);
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          box-shadow: 0 0 10px rgba(81, 255, 166, 0.3);
+        }
+        50% {
+          box-shadow: 0 0 20px rgba(81, 255, 166, 0.7);
+        }
+      }
     </style>
   </head>
   <body>

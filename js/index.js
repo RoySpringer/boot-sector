@@ -7,6 +7,7 @@ const CONFIG = {
     "cafa51a40e34a9536eecbeceb8cb6ee5e961a54daa5b2ba60b00f6c9d8eaeefc",
   segmentReveal: "SEGMENT: ENGINEER",
   colors: { bg: "#0b0f10", fg: "#d2fbd4", accent: "#51ffa6" }, // Terminal style
+  nextLevel: "aHR0cHM6Ly9jb2RlcGVuLmlvL01vNEgvcGVuL1hKbVBvd1I=", // Masked URL to next level Console Gate
 };
 
 // Terminal state
@@ -581,6 +582,31 @@ function performBoot() {
               `\nMission accomplished! The system is now operational.`,
               "success"
             );
+
+            // Add next level link
+            setTimeout(() => {
+              try {
+                const nextLevelUrl = atob(CONFIG.nextLevel);
+                addOutput(`\n[SYSTEM] Next level unlocked!`, "info");
+                addOutput(`[SYSTEM] Proceed to: ${nextLevelUrl}`, "success");
+                addOutput(`\nClick here to continue: `, "info");
+
+                // Create clickable link element
+                const linkDiv = document.createElement("div");
+                linkDiv.className = "command-output success";
+                linkDiv.style.textAlign = "center";
+                linkDiv.style.margin = "20px 0";
+                linkDiv.innerHTML = `<a href="${nextLevelUrl}" target="_blank" rel="noopener" class="next-level-link">🚀 CONTINUE TO NEXT LEVEL 🚀</a>`;
+                terminalOutput.appendChild(linkDiv);
+                terminalBody.scrollTop = terminalBody.scrollHeight;
+              } catch (error) {
+                addOutput(
+                  `[SYSTEM] Error decoding next level URL: ${error.message}`,
+                  "error"
+                );
+              }
+            }, 1000);
+
             terminalState.bootCompleted = true;
 
             // Update terminal status
