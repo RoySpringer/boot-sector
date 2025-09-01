@@ -430,10 +430,6 @@ function setBit(args) {
   }
 
   const byte = bytes[byteIndex];
-  if (byte[bitIndex] !== "?" && byte[bitIndex] !== "*") {
-    addOutput(`Error: Position ${position} is not corrupted.`, "error");
-    return;
-  }
 
   // Update the bit
   const newByte =
