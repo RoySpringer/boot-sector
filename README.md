@@ -23,15 +23,6 @@ De 5 segmenten (in volgorde):
 
 ---
 
-## 🌐 Start hier
-
-👉 Begin bij de **Boot-Sector Terminal**:  
-https://royspringer.github.io/boot-sector/
-
-Daarna leiden de puzzels zichzelf verder.
-
----
-
 ## 📚 Praktisch
 
 - Werk samen in je team. Verdeel de rollen slim.
@@ -50,6 +41,15 @@ Daarna leiden de puzzels zichzelf verder.
 3. **Crypto Lock** – los het grid en encryptie-laag op.
 4. **Branch Adventure** – speur door GitLab (branches, tags, history) om het segment te vinden.
 5. **Code Validation** – vul alle segmenten in om de 3-cijferige code te genereren.
+
+---
+
+## 🌐 Start hier
+
+👉 Begin bij de **Boot-Sector Terminal**:  
+https://royspringer.github.io/boot-sector/
+
+Daarna leiden de puzzels zichzelf verder.
 
 ---
 
