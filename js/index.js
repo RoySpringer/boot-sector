@@ -1,7 +1,7 @@
 const CONFIG = {
   rootPassword: "SuperGeheimWachtwoord", // Used in code but also hidden as hint
   bootSectorBytes:
-    "010001?? 0?00111? 01000?11 01001001 010??110 0100010? 0100010? 01010???",
+    "010001?1 010011?0 0100011? 01001001 0100111? 01000?01 01000101 010?0010",
   expectedText: "RU5HSU5FRVI=",
   expectedSha256Hex:
     "cafa51a40e34a9536eecbeceb8cb6ee5e961a54daa5b2ba60b00f6c9d8eaeefc",
@@ -37,6 +37,8 @@ const commands = [
   "boot",
   "clear",
   "exit",
+  "reset",
+  "self-destruct",
 ];
 
 // DOM elements
@@ -174,13 +176,6 @@ function executeCommand(command) {
       case "su":
         performLogin();
         break;
-      case "sudo":
-        if (args[0] === "write" && args[1] === "boot-sector") {
-          enterRepairMode();
-        } else {
-          addOutput(`Error: Unknown sudo command '${args.join(" ")}'`, "error");
-        }
-        break;
       case "write":
         if (args[0] === "boot-sector") {
           if (terminalState.isRoot) {
@@ -232,6 +227,26 @@ function executeCommand(command) {
           );
         }
         break;
+      case "converter":
+        if (terminalState.inRepairMode) {
+          openConverter();
+        } else {
+          addOutput(
+            "Error: Not in repair mode. Use 'write boot-sector' first.",
+            "error"
+          );
+        }
+        break;
+      case "reset":
+        if (terminalState.inRepairMode) {
+          resetRepair();
+        } else {
+          addOutput(
+            "Error: Not in repair mode. Use 'write boot-sector' first.",
+            "error"
+          );
+        }
+        break;
       case "validate":
         validateRepair();
         break;
@@ -247,6 +262,9 @@ function executeCommand(command) {
         } else {
           addOutput("Error: Not in repair mode.", "error");
         }
+        break;
+      case "self-destruct":
+        selfDestruct();
         break;
       default:
         addOutput(
@@ -279,6 +297,8 @@ repair hint             - Show repair instructions
 list                    - Show corrupted bit positions
 set <pos>=<0|1>         - Set bit at position (e.g., set 3=1)
 preview                 - Preview current repair result
+reset                   - Resets back to the original corrupted data
+converter               - Open the binary-to-text helper
 exit                    - Exit repair mode
 
 VALIDATION COMMANDS:
@@ -287,6 +307,7 @@ boot                    - Boot system (requires validation)
 
 UTILITY COMMANDS:
 clear                   - Clear terminal output
+self-destruct           - DO NOT use this command
       `;
   addOutput(helpText, "info");
 }
@@ -333,7 +354,7 @@ function performLogin() {
 function enterRepairMode() {
   if (!terminalState.isRoot) {
     addOutput(
-      "Error: Permission denied. Try 'su' or 'sudo write boot-sector'",
+      "Error: Permission denied. Try 'su' to switch to the root user.'",
       "error"
     );
     return;
@@ -353,18 +374,32 @@ function showRepairHint() {
 REPAIR INSTRUCTIONS:
 
 The boot sector contains binary data that represents ASCII characters.
-Each 8-bit group (byte) represents one character.
+Each 8-bit group (byte) represents one character. Use the 'preview' 
+command or binary-to-text converter to find the word.
 
 Corrupted bits are marked with '?' or '*'.
-Your task is to replace these with 0 or 1 to form readable ASCII text.
+Your task is to replace these with 0 or 1 to form a WORD.
+
+Tip: use a binary-to-text helper to write down the possible letters 
+per byte (8-bits).
 
 To repair:
 1. Use 'list' to see corrupted positions
 2. Use 'set <position>=<0|1>' to fix bits
 3. Use 'preview' to see current result
 4. Use 'validate' when done
+5. Use 'reset' to go back to the original corupted data
+6. Use 'converter' to open the binary-to-text helper
       `;
   addOutput(hintText, "info");
+}
+
+function openConverter() {
+  addOutput("Opening binary-to-text helper...", "info");
+  window.open(
+    "https://www.rapidtables.com/convert/number/binary-to-ascii.html",
+    "_blank"
+  );
 }
 
 // List corrupted bits
@@ -540,6 +575,47 @@ async function validateRepair() {
   } catch (error) {
     addOutput(`[VALIDATE] Error calculating hash: ${error.message}`, "error");
   }
+}
+
+function resetRepair() {
+  addOutput("Resetting repair...", "info");
+  terminalState.currentBootSector = CONFIG.bootSectorBytes;
+  addOutput(
+    `Reset boot sector: ${terminalState.currentBootSector}`,
+    "boot-sector-display"
+  );
+  addOutput("Repair reset.", "success");
+}
+
+function selfDestruct() {
+  addOutput("Self-destruction sequence initiated...", "info");
+  const confirm = prompt(
+    "Type 'confirm' to start the self-destruction sequence"
+  );
+  if (confirm !== "confirm") {
+    addOutput("Self-destruction sequence aborted.", "error");
+    return;
+  }
+  setTimeout(() => {
+    addOutput("Selecting content for self-destruction...", "success");
+    const element = document.querySelector(".hidden-hint");
+    const range = document.createRange();
+    range.selectNodeContents(element);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    addOutput("Content selected for self-destruction.", "success");
+    setTimeout(() => {
+      addOutput("Deleting content...", "info");
+      setTimeout(() => {
+        addOutput(
+          `[ERROR] Content in: <div class="hidden-hint">...</div> could not be deleted.`,
+          "error"
+        );
+        addOutput("Self-destruction sequence failed.", "error");
+      }, 1000);
+    }, 1000);
+  }, 1000);
 }
 
 // Perform boot
