@@ -19,14 +19,16 @@ De 5 segmenten (in volgorde):
 2. **Console Gate**
 3. **Crypto Lock**
 4. **Branch Adventure**
-5. **Code Validation**
+5. **Unknown**
+
+LET OP: _Segment 5 is nog nooit gevonden. Hiervoor moeten jullie alles op alles zetten om deze te vinden._
 
 ---
 
 ## 📚 Praktisch
 
 - Werk samen in je team. Verdeel de rollen slim.
-- Inspecteer broncode, gebruik “View Source” of “Inspect Element” als dat nodig is.
+- Inspecteer broncode, gebruik “View Source” of “Inspect Element” en de "Console" als dat nodig is.
 - Soms zijn hints **verborgen in de code** of in onzichtbare tekst.
 - Gebruik je creativiteit — niet alle antwoorden zijn direct zichtbaar.
 - Na het voltooien van alle puzzels krijg je een **3-cijferige code**.
@@ -40,7 +42,9 @@ De 5 segmenten (in volgorde):
 2. **Console Gate** – fix kleine bugs in code; teamwork vereist.
 3. **Crypto Lock** – los het grid en encryptie-laag op.
 4. **Branch Adventure** – speur door GitLab (branches, tags, history) om het segment te vinden.
-5. **Code Validation** – vul alle segmenten in om de 3-cijferige code te genereren.
+5. **Code Validation** – Ga me alle segmenten naar de de code validator (Docent vooraan de klas) om een code te genereren.
+
+Heb je de code? Test het op het slotje alleen de juiste code unlock de goodiebag!
 
 ---
 
