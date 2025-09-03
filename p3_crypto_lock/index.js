@@ -1,7 +1,7 @@
 const CONFIG = {
   segmentReveal: "RlVUVVJF",
   NEXT_URL:
-    "aHR0cHM6Ly9yb3lzcHJpbmdlci5naXRodWIuaW8vYm9vdC1zZWN0b3IvcDNfY3J5cHRvX2xvY2s=",
+    "aHR0cHM6Ly9naXRsYWIuY29tL3Iuc3ByaW5nZXIudGlqZGVsaWprL2JyYW5jaC1leHBsb3Jlci8tL3RyZWUvbWFpbi8=",
 };
 
 // Matrix background effect
@@ -574,29 +574,29 @@ document.addEventListener("DOMContentLoaded", () => {
       "color: #00ff00; font-weight: bold;"
     );
     console.log(
-      "%cLayer 1: Which numbers make the progression?",
+      "%c1. Layer 1: Which numbers make the progression?",
       "color: #00aa00;"
     );
     console.log(
-      "%cLayer 2: Mathematical transformations reveal new coordinates",
+      "%c2. Layer 2: Mathematical transformations reveal new coordinates",
       "color: #00aa00;"
     );
-    console.log("%cLayer 2: Look for the hidden word", "color: #00aa00;");
+    console.log("%c3. Layer 2: Look for the hidden word", "color: #00aa00;");
     console.log(
       "%cType 'hint(1)', 'hint(2)', or 'hint(3)' for specific guidance",
       "color: #00aa00;"
     );
   };
 
-  window.hint = function (layer) {
-    if (layer === 3) throw new Error("numbers are not allowed. remove them.");
+  window.hint = function (id) {
+    if (id === 3) throw new Error("numbers are not allowed. remove them.");
     const hints = {
       1: "Find each number in the sequence by clicking on the grid",
       2: `Transform coordinates: ${window.transformationHints.map(
         (hint) => `${hint}`
       )}`,
     };
-    console.log("%c" + hints[layer], "color: #ffaa00; font-weight: bold;");
+    console.log("%c" + hints[id], "color: #ffaa00; font-weight: bold;");
   };
 
   // Add keyboard shortcuts for cryptic hints
