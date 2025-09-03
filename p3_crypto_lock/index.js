@@ -482,7 +482,7 @@ function checkLayer1() {
       document.querySelector(".terminal").classList.add("red");
     }, 2000);
   } else {
-    showStatus("Incorrect pattern. Try again.", "error");
+    showStatus("Incorrect sqeuence. Try again.", "error");
   }
 }
 
