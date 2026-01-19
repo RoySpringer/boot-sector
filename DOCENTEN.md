@@ -16,7 +16,7 @@ Deze handleiding ondersteunt docenten bij het begeleiden van studenten tijdens d
 
 ## Klaar zetten
 
-- Zorg dat je één computer vooraan de klas klaarzet met daarop de code-validator: https://royspringer.github.io/boot-sector/code_validation.
+- Zorg dat je één computer vooraan de klas klaarzet met daarop de code-validator: [https://boot-sector.jump-start.dev/code_validation/](https://boot-sector.jump-start.dev/code_validation/).
 - Zet de goodiebag vooraan op een tafel (naast de computer).
 
 Zodra een groep denkt dat zij alle segmenten gevonden hebben, dan kan de groep naar voren komen om de segmenten in te voeren op de computer. Hieruit komt een code welke ze vervolgens op de goodiebag kunnen testen.
@@ -30,7 +30,7 @@ Deel de studentuitleg uit en laat ze deze goed lezen. Zodra ze dit hebben gedaan
 
 1. **Boot-Sector**
 
-   - URL: https://royspringer.github.io/boot-sector/
+   - URL: https://boot-sector.jump-start.dev/
    - Studenten voeren terminal-commando’s uit (`scan`, `read boot-sector`, `su`, `write boot-sector`, `set`, `validate`, `boot`).
    - `write boot-sector` vereist sudo. Het wachtwoord zit in de HTML verborden. Het is tekts met dezelfde kleur als de achtergrond. Wordt zichtbaar door te inspecteren of een `CTRL+A`
    - Doel: ontdekken dat de corrupte bytes ASCII vormen → **Segment 1/5: ENGINEER**.
@@ -44,7 +44,7 @@ Deel de studentuitleg uit en laat ze deze goed lezen. Zodra ze dit hebben gedaan
 
 3. **Crypto Lock**
 
-   - URL: https://royspringer.github.io/boot-sector/p3_crypto_lock/
+   - URL: https://boot-sector.jump-start.dev/p3_crypto_lock/
    - Studenten doorlopen grid puzzels in 2 lagen.
    - _Valstrik_: inspector laat het segment `CRYPTO` zien en een Rick Roll link → fout. Dan hebben ze de opdracht niet gespeeld. De link moet namelijk verwijzen naar de Branch Adventure.
    - Correct oplossen onthult → **Segment 3/5: FUTURE**.
@@ -59,7 +59,7 @@ Deel de studentuitleg uit en laat ze deze goed lezen. Zodra ze dit hebben gedaan
    - Volgorde van de letters leidt tot → **Segment 4/5: ORIGIN**.
 
 5. **Code Validation**
-   - URL: https://royspringer.github.io/boot-sector/code_validation/
+   - URL: [https://boot-sector.jump-start.dev/code_validation/](https://boot-sector.jump-start.dev/code_validation/).
    - Studenten vullen de 5 segmenten in LET OP: ALL CAPS:
      1. ENGINEER
      2. PRESENT
