@@ -160,6 +160,27 @@
       border: 1px solid #00ffff;
       color: #00ffff;
     }
+    .status.warning {
+      background: #443300;
+      border: 1px solid #ff8800;
+      color: #ffaa44;
+    }
+    .status.critical {
+      background: #440000;
+      border: 2px solid #ff0000;
+      color: #ff6666;
+      animation: critical-pulse 1s ease-in-out infinite;
+    }
+    @keyframes critical-pulse {
+      0%, 100% {
+        box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+        opacity: 1;
+      }
+      50% {
+        box-shadow: 0 0 20px rgba(255, 0, 0, 1);
+        opacity: 0.9;
+      }
+    }
     .hint {
       background: #222;
       border-left: 3px solid #00ff00;
@@ -257,23 +278,88 @@
       top: 10px;
       right: 10px;
       background: #004400;
-      border: 1px solid #00ff00;
+      border: 2px solid #00ff00;
       color: #00ff00;
-      padding: 5px 10px;
-      border-radius: 4px;
-      font-size: 12px;
+      padding: 12px 20px;
+      border-radius: 6px;
+      font-size: 18px;
       font-weight: bold;
       z-index: 100;
+      box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+      transition: all 0.3s ease;
     }
     .layer-indicator.layer-2 {
       background: #440000;
       border-color: #ff0000;
       color: #ff6666;
+      box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+      animation: layer2-pulse 1.5s ease-in-out infinite;
+      font-size: 22px;
+      padding: 15px 25px;
+      border-width: 3px;
     }
     .layer-indicator.layer-3 {
       background: #444400;
       border-color: #ffff00;
       color: #ffff66;
+      box-shadow: 0 0 20px rgba(255, 255, 0, 0.8);
+    }
+    @keyframes layer2-pulse {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+      }
+      50% {
+        transform: scale(1.1);
+        box-shadow: 0 0 30px rgba(255, 0, 0, 1);
+      }
+    }
+    .hint.high-alert {
+      animation: high-alert-pulse 1.5s ease-in-out infinite;
+      border-left-width: 5px;
+      border-left-color: #ff0000;
+      background: rgba(68, 0, 0, 0.3);
+    }
+    @keyframes high-alert-pulse {
+      0%, 100% {
+        opacity: 1;
+        box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+      }
+      50% {
+        opacity: 0.8;
+        box-shadow: 0 0 20px rgba(255, 0, 0, 1);
+      }
+    }
+    .layer1-sequence-display {
+      background: rgba(68, 0, 0, 0.4);
+      border: 2px solid #ff0000;
+      border-radius: 6px;
+      padding: 15px;
+      margin: 15px 0;
+      text-align: center;
+      font-size: 16px;
+      color: #ff6666;
+      box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+      transition: all 0.3s ease;
+    }
+    .layer1-sequence-display.hidden {
+      display: none;
+    }
+    .layer1-sequence-display .label {
+      font-weight: bold;
+      margin-bottom: 8px;
+      color: #ff8888;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .layer1-sequence-display .sequence {
+      font-family: "Courier New", monospace;
+      font-size: 18px;
+      font-weight: bold;
+      color: #ff6666;
+      letter-spacing: 3px;
+      word-spacing: 5px;
     }
   </style>
   <body>
@@ -313,8 +399,15 @@
         <strong>🔍 INITIAL SCAN:</strong> Coordinates dance in sequence.
       </div>
 
+      <div class="layer1-sequence-display hidden" id="layer1-sequence-display">
+        <div class="label">Layer 1 Sequence Reference</div>
+        <div class="sequence" id="layer1-sequence-text"></div>
+      </div>
+
       <div class="crypto-grid" id="crypto-grid"></div>
 
+      <div id="status"></div>
+      
       <div class="progress-bar">
         <div class="progress-fill" id="progress-fill"></div>
       </div>
@@ -348,7 +441,7 @@
         </div>
       </div>
 
-      <div id="status"></div>
+      
       <div id="reveal" class="hidden">
         <div class="status success">
           <h3>🎉 ACCESS GRANTED! 🎉</h3>

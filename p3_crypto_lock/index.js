@@ -235,11 +235,21 @@ class CryptoGrid {
             return;
           }
 
-          // Show remaining clicks
+          // Show remaining clicks with color coding
           const remainingClicks = MAX_LAYER2_CLICKS - layer2ClickCount;
+          let statusType = "info";
+          
+          if (remainingClicks <= 3) {
+            // 3 or less: red and pulsing
+            statusType = "critical";
+          } else if (remainingClicks <= 5) {
+            // 5 or less: orange
+            statusType = "warning";
+          }
+          
           showStatus(
             `Layer 2: ${remainingClicks} wrong clicks remaining`,
-            "info"
+            statusType
           );
           if (remainingClicks < MAX_LAYER2_CLICKS / 2) {
             updateHint(6);
@@ -392,6 +402,17 @@ function switchToCryptoGrid() {
   // Reset click counter for layer 2
   layer2ClickCount = 0;
 
+  // Add visual transition effect for layer 2
+  const terminal = document.querySelector(".terminal");
+  const layerIndicator = document.getElementById("layer-indicator");
+  
+  // Create a flash effect when entering layer 2
+  terminal.style.transition = "all 0.5s ease";
+  terminal.style.transform = "scale(1.02)";
+  setTimeout(() => {
+    terminal.style.transform = "scale(1)";
+  }, 500);
+
   initCryptoGrid("layer2");
   updateLayerIndicator(2);
   showStatus(
@@ -399,6 +420,22 @@ function switchToCryptoGrid() {
     "success"
   );
   document.getElementById("layer2-group").classList.remove("hidden");
+  
+  // Show layer 1 sequence display
+  const sequenceDisplay = document.getElementById("layer1-sequence-display");
+  const sequenceText = document.getElementById("layer1-sequence-text");
+  if (sequenceDisplay && sequenceText && window.sequentialPattern) {
+    sequenceText.textContent = window.sequentialPattern.join("  ");
+    sequenceDisplay.classList.remove("hidden");
+  }
+  
+  // Add entrance animation to layer indicator
+  if (layerIndicator) {
+    layerIndicator.style.animation = "none";
+    setTimeout(() => {
+      layerIndicator.style.animation = "layer2-pulse 1.5s ease-in-out infinite";
+    }, 10);
+  }
 }
 
 // Function to update progress for crypto grid
@@ -451,6 +488,12 @@ function updateHint(hintID) {
 
   if (hints[hintID]) {
     hintElement.innerHTML = hints[hintID];
+    // Add high-alert class for pulsing animation when hint 5 is shown
+    if (hintID === 5) {
+      hintElement.classList.add("high-alert");
+    } else {
+      hintElement.classList.remove("high-alert");
+    }
   }
 }
 
@@ -479,7 +522,16 @@ function checkLayer1() {
       updateHint(5);
       const progressFill = document.getElementById("progress-fill");
       progressFill.style.width = 0 + "%";
-      document.querySelector(".terminal").classList.add("red");
+      const terminal = document.querySelector(".terminal");
+      terminal.classList.add("red");
+      
+      // Add a visual flash to emphasize layer 2 entry
+      setTimeout(() => {
+        terminal.style.boxShadow = "0 0 40px rgba(255, 0, 0, 1)";
+        setTimeout(() => {
+          terminal.style.boxShadow = "";
+        }, 500);
+      }, 100);
     }, 2000);
   } else {
     showStatus("Incorrect sqeuence. Try again.", "error");
@@ -579,9 +631,9 @@ document.addEventListener("DOMContentLoaded", () => {
     );
     console.log(
       "%c2. Layer 2: Mathematical transformations reveal new coordinates",
-      "color: #00aa00;"
+      "color: #ff0000;"
     );
-    console.log("%c3. Layer 2: Look for the hidden word", "color: #00aa00;");
+    console.log("%c3. Layer 2: Look for the hidden word", "color: #ff0000;");
     console.log(
       "%cType 'hint(1)', 'hint(2)', or 'hint(3)' for specific guidance",
       "color: #00aa00;"
@@ -591,7 +643,7 @@ document.addEventListener("DOMContentLoaded", () => {
   window.hint = function (id) {
     if (id === 3) throw new Error("numbers are not allowed. remove them.");
     const hints = {
-      1: "Find each number in the sequence by clicking on the grid",
+      1: "Find each number in the sequence by clicking on the grid. Leave only the numbers that make progress.",
       2: `Transform coordinates: ${window.transformationHints.map(
         (hint) => `${hint}`
       )}`,
