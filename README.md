@@ -52,7 +52,7 @@ Heb je de code? Test het op het slotje alleen de juiste code unlock de goodiebag
 ## 🌐 Start hier
 
 👉 Begin bij de **Boot-Sector Terminal**:  
-https://royspringer.github.io/boot-sector/
+https://boot-sector.jump-start.dev/
 
 Daarna leiden de puzzels zichzelf verder.
 
