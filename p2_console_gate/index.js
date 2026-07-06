@@ -194,7 +194,7 @@ async function runAll() {
       segment.textContent(atob("UHJlc2VudA==").toUpperCase());
       nextLink.href = atob(NEXT_URL);
       // celebratory
-      log(`▶ Segment B unlocked: ${atob("UHJlc2VudA==").toUpperCase()}`);
+      log(`▶ Segment 2/5 unlocked: ${atob("UHJlc2VudA==").toUpperCase()}`);
       log("▶ Proceed to Crypto Lock…");
     } else {
       log("[HASH] verification failed (unexpected).");

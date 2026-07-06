@@ -1,3 +1,4 @@
+/* FIX THE BUGS IN THE JS PANEL --> */
 :root {
   --bg: #0b0f10;
   --fg: #d2fbd4;
@@ -9,24 +10,27 @@
 * {
   box-sizing: border-box;
 }
-html,
-body {
-  height: 100%;
+
+html {
+  position: relative;
+  width: 100%
 }
+
 body {
+  position: relative;
   margin: 0;
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   background: var(--bg);
   color: var(--fg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
+  padding: 8px;
+  width: 100%;
 }
+
 .shell {
-  width: min(980px, 100%);
+  width: 100%;
+  margin: 0 auto;
   border: 1px solid #1f2a2e;
-  border-radius: 12px;
+  border-radius: 10px;
   background: #0e1416;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
 }
@@ -34,7 +38,9 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 14px;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 8px 12px;
   border-bottom: 1px solid #1f2a2e;
   background: #111a1d;
 }
@@ -42,33 +48,68 @@ body {
   color: var(--accent);
   font-weight: 700;
   letter-spacing: 0.4px;
+  font-size: 14px;
 }
 .body {
-  padding: 18px;
-}
-.story {
-  color: #bfe;
-  margin-bottom: 16px;
-}
-.grid {
+  padding: 12px;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: 12px;
+  grid-template-columns: 1fr;
+}
+/* Wide result pane (CodePen bottom layout): briefing next to the work area */
+@media (min-width: 1000px) {
+  .body {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+  .reveal-card {
+    grid-column: 1 / -1;
+  }
 }
 .card {
   border: 1px solid #1f2a2e;
   border-radius: 10px;
   background: #0f1518;
-  padding: 14px;
+  padding: 12px;
 }
 .card h3 {
   margin: 0 0 8px;
   color: var(--accent);
-  font-size: 16px;
+  font-size: 15px;
 }
+
+/* Step-by-step briefing */
+.steps ol {
+  margin: 0 0 10px;
+  padding-left: 22px;
+  font-size: 13px;
+  line-height: 1.65;
+  color: #bfe;
+}
+.steps li {
+  margin-bottom: 2px;
+}
+.steps li::marker {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+/* Narrow CodePen result pane: stack everything in one column */
+@media (max-width: 720px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .tests {
   display: grid;
-  gap: 8px;
+  gap: 6px;
 }
 .test {
   display: flex;
@@ -76,7 +117,8 @@ body {
   justify-content: space-between;
   border: 1px solid #223035;
   border-radius: 8px;
-  padding: 8px;
+  padding: 6px 10px;
+  font-size: 13px;
 }
 .test .name {
   font-weight: 600;
@@ -93,6 +135,9 @@ body {
 .warn {
   color: var(--warn);
 }
+.progress-wrap {
+  margin: 10px 0;
+}
 .progress {
   height: 10px;
   background: #10181b;
@@ -104,17 +149,30 @@ body {
   height: 100%;
   width: 0;
   background: linear-gradient(90deg, #1affb3, #58ffd2);
+  transition: width 0.4s;
 }
 .btn {
   background: #132026;
   color: var(--fg);
   border: 1px solid #2a3b40;
-  padding: 8px 12px;
+  padding: 8px 14px;
   border-radius: 8px;
   cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
 }
 .btn:hover {
   border-color: #39585f;
+}
+.btn.primary {
+  background: #12402a;
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: 700;
+}
+.btn.primary:hover {
+  background: #175636;
+  box-shadow: 0 0 10px rgba(81, 255, 166, 0.25);
 }
 .row {
   display: flex;
@@ -123,7 +181,7 @@ body {
   flex-wrap: wrap;
 }
 .hint {
-  font-size: 13px;
+  font-size: 12px;
   color: #9fd;
   border-left: 3px solid #2d8;
   padding-left: 10px;
@@ -132,31 +190,36 @@ body {
   background: #081014;
   border: 1px solid #1f2a2e;
   border-radius: 10px;
-  padding: 12px;
-  font-size: 13px;
+  padding: 10px;
+  font-size: 12px;
+  line-height: 1.5;
   color: #9ad;
-  height: 180px;
+  height: 100%;
+  min-height: 120px;
+  max-height: 230px;
   overflow: auto;
   white-space: pre-wrap;
 }
 .muted {
   color: #8ba;
+  font-size: 13px;
 }
 .hidden {
   display: none;
 }
 .invis {
-  color: #0b0f10;
+  color: #0f1518;
   user-select: text;
 }
 .seg {
   color: #7fffb7;
   font-weight: 800;
+  font-size: 18px;
+  letter-spacing: 2px;
 }
-.footer {
-  padding: 12px 14px;
-  border-top: 1px solid #1f2a2e;
-  color: #99b;
+.reveal-card #reveal {
+  font-size: 14px;
+  line-height: 1.7;
 }
 a {
   color: #86f7ff;

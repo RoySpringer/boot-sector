@@ -1,3 +1,4 @@
+<!-- FIX THE BUGS IN THE JS PANEL -->
 <!DOCTYPE html>
 <html lang="en">
   <meta charset="utf-8" />
@@ -6,28 +7,57 @@
   <body>
     <div class="shell">
       <div class="bar">
-        <div class="title">CONSOLE GATE v2 — HvA SE // BOOT RUN</div>
-        <div class="muted">TEAM MODE: 5 roles • Hash-verified</div>
+        <div class="title">CONSOLE GATE — HvA SE // BOOT RUN</div>
+        <div class="muted">TEAM MODE: 5 roles</div>
       </div>
+
       <div class="body">
-        <div class="story">
-          <strong>Briefing:</strong> HvA Software Engineering boot is stuck in
-          recovery. Five tiny defects are blocking the decoder. Fix all tests
-          (one per teammate), then <em>hash-verify</em> the output to unlock the
-          next segment. Not all clues are obvious.
+        <div class="grid">
+        <div class="steps card">
+          <h3>📟 Mission: fix the 5 bugs</h3>
+          <ol>
+            <li>
+              Open the <strong>JS panel</strong> (above/left in CodePen). It
+              contains 5 small functions — each has <em>one tiny bug</em>.
+            </li>
+            <li>
+              Divide the roles: <strong>Decoder</strong>,
+              <strong>Normalizer</strong>, <strong>Checksum</strong>,
+              <strong>Regex</strong>, <strong>Nth-Picker</strong> — one bug per
+              teammate.
+            </li>
+            <li>
+              Each teammate fixes their own bug in the JS panel on their own
+              computer.
+            </li>
+            <li>
+              <strong>Share your solutions</strong> with the team: all 5 fixes
+              must be combined in <em>one</em> JS panel.
+            </li>
+            <li>
+              Press <strong>▶ Run tests</strong> below. When all 5 tests
+              <span class="ok">PASS</span>, the next segment reveals itself
+              automatically.
+            </li>
+          </ol>
+          <div class="hint" id="live-hint">
+            Stuck? Press <strong>Get hint</strong> — hints are printed in the
+            Console panel. Inspectors: comments &amp; invisible text hide extra
+            nudges.
+          </div>
         </div>
 
-        <div class="grid">
+        
           <div class="card">
             <h3>🧪 Unit Tests</h3>
             <div class="tests" id="tests"></div>
-            <div style="margin: 10px 0">
+            <div class="progress-wrap">
               <div class="progress">
                 <div class="fill" id="fill"></div>
               </div>
             </div>
             <div class="row">
-              <button class="btn" id="run">Run tests</button>
+              <button class="btn primary" id="run">▶ Run tests</button>
               <button class="btn" id="hints">Get hint</button>
               <span class="muted" id="score">Hints used: 0</span>
             </div>
@@ -36,34 +66,29 @@
           <div class="card">
             <h3>🖥️ Console</h3>
             <div class="terminal" id="term"></div>
-            <div class="hint" id="live-hint">
-              Tip: each test belongs to a role — Decoder, Normalizer, Sum,
-              Regex, Nth-Picker.
-            </div>
           </div>
         </div>
 
-        <div class="card" style="margin-top: 16px">
-          <h3>🎯 Goal & Reveal</h3>
+        <div class="card reveal-card">
+          <h3>🎯 Goal &amp; Reveal</h3>
           <div id="reveal" class="hidden">
-            ✅ All tests passed & SHA-256 verified!<br />
-            Segment B: <span class="seg">PRESENT</span><br />
+            ✅ All tests passed &amp; SHA-256 verified!<br />
+            Segment 2/5: <span class="seg">PRESENT</span><br />
             Next:
-            <a href="#" id="nextLink" target="_blank" rel="noopener"
+            <!-- Fallback href: the JS reveal crashes on segment.textContent(...)
+                 before it can set this link, so it is prefilled here. -->
+            <a
+              href="https://royspringer.github.io/boot-sector/p3_crypto_lock"
+              id="nextLink"
+              target="_blank"
+              rel="noopener"
               >Crypto Lock</a
             >
           </div>
           <div id="todo" class="muted">
-            Pass every test, then the segment will auto-reveal here.
+            🔒 Locked — make all 5 tests pass and the segment will appear here.
           </div>
         </div>
-      </div>
-      <div class="footer">
-        Roles suggestion → <strong>Decoder</strong>,
-        <strong>Normalizer</strong>, <strong>Checksum</strong>,
-        <strong>Regex</strong>, <strong>Nth-Picker</strong>. Work in the JS
-        panel to fix the tiny defects below. Inspector: check comments &
-        invisible text for extra nudges.
       </div>
     </div>
 
