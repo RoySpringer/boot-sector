@@ -1,4 +1,4 @@
-# 🚀 HvA Software Engineering – Boot Run Escape
+# 🚀 HBO ICT – Boot Run Escape
 
 Welkom IT'ers in opleiding!  
 Tijdens de introductieweek wacht jullie een missie: **het HvA-systeem herstellen**.  
