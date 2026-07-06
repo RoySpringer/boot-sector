@@ -28,6 +28,7 @@ const commands = [
   "read boot-sector",
   "login",
   "su",
+  "sudo write boot-sector",
   "write boot-sector",
   "repair hint",
   "list",
@@ -176,6 +177,9 @@ function executeCommand(command) {
       case "su":
         performLogin();
         break;
+      case "sudo":
+        handleSudo(args);
+        break;
       case "write":
         if (args[0] === "boot-sector") {
           if (terminalState.isRoot) {
@@ -290,6 +294,7 @@ scan                    - Perform system scan
 read boot-sector        - Display current boot sector bytes
 login                   - Login as root user
 su                      - Switch to root user
+sudo <command>          - Run a single command as root (e.g. sudo write boot-sector)
 write boot-sector  - Enter boot sector repair mode (requires root)
 
 REPAIR MODE COMMANDS:
@@ -348,6 +353,45 @@ function performLogin() {
   } else {
     addOutput("Login failed. Invalid password.", "error");
   }
+}
+
+// Run a single command with temporary root privileges
+function handleSudo(args) {
+  if (args.length === 0) {
+    addOutput("Error: sudo requires a command.", "error");
+    return;
+  }
+
+  const password = prompt("[sudo] password for root:");
+  if (password !== CONFIG.rootPassword) {
+    addOutput("sudo: authentication failure", "error");
+    return;
+  }
+
+  const subCmd = args[0].toLowerCase();
+  const subArgs = args.slice(1);
+  const wasRoot = terminalState.isRoot;
+
+  terminalState.isRoot = true;
+  updatePrompt();
+
+  switch (subCmd) {
+    case "write":
+      if (subArgs[0] === "boot-sector") {
+        enterRepairMode();
+      } else {
+        addOutput(`Error: Unknown write target '${subArgs[0]}'`, "error");
+      }
+      break;
+    default:
+      addOutput(
+        `sudo: '${args.join(" ")}': command not supported via sudo`,
+        "error"
+      );
+  }
+
+  terminalState.isRoot = wasRoot;
+  updatePrompt();
 }
 
 // Enter repair mode
