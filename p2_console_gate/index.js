@@ -1,77 +1,88 @@
 /* ================================
    PUZZLE CODE — Small bugs inside
-   FIX THE BUGS IN THIS PANEL: 
+   FIX THE BUGS IN THIS PANEL - Scroll Down:
    The following functions in the JS panel of CodePen have bugs.
-   Devide the work and debug together to solve each puzzle.
+   Divide the work and debug together to solve each puzzle.
+
+   DEBUG CONSOLE: open the browser console (F12 → Console) or the Console in code pen.
+   Every bug prints its own debug line, marked with [BUG x],
+   so you can see live what each function returns right now.
    ================================ */
 
 //-----------------------------------------
-// BUG: Onderzoeken waarom de decoder niet werk?
-// Hij lijkt verkeerd te decoden
-// 1) Decoder: Maakt van een encode word een normaal woord: bijv. "uftu" wordt "test"
+// BUG 1: De toegangscheck weigert iedereen, zelfs met de juiste
+// status "granted". Er lijkt iets mis te zijn in de if-vergelijking…
+// 1) AccessCheck: geeft "ACCESS GRANTED" als de status "granted" is,
+//    anders "ACCESS DENIED"
 //-----------------------------------------
-function decodeShift(s) {
-  let out = "";
-  for (let i = 0; i < s.length; i++) {
-    const code = s.charCodeAt(i) + 1;
-    out += String.fromCharCode(code);
+function accessCheck(status) {
+  if (status === "grantted") {
+    return "ACCESS GRANTED";
   }
-  return out;
+  return "ACCESS DENIED";
 }
-console.log("1) DecodeShift: " + decodeShift("uftu"));
-
-// BUG: Bug, normalizer doet niks. Ik zie nog steeds spaties en hoofdletters.
-// 2) Normalizer: haalt de spaties vooraan en achteraan weg en maakt alles lage letters
-function normalize(s) {
-  return s;
-}
-// Open de browser console
-console.log("2) Normalize:  '" + normalize("   Test Trim   ") + "'");
-
-//-----------------------------------------
-// BUG: Lijkt erop dat hij niet goed opteld alle waardes in een lijst op telt.
-// 3) Checksum: telt alle nummers in een lijst bij elkaar op
-//-----------------------------------------
-function checksum(arr) {
-  let sum = 0;
-  for (let i = 0; i < arr.length - 1; i++) {
-    sum += arr[i];
-  }
-  return sum;
-}
-// Open de browser console
-console.log("3) Checksum: " + checksum([1, 2, 3]));
-
-//-----------------------------------------
-// BUG: Hij lijkt hoofdletter gevoelig.
-// 4) Email regex: moet alle emails valideren inclusief hoofdletters: "Student@hva.nl"
-//-----------------------------------------
-function isValidEmail(s) {
-  const regex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
-  return regex.test(s);
-}
-// Open de browser console
 console.log(
-  "4) Is valid email - 'Student@hva.nl': " + isValidEmail("Student@hva.nl")
+  "[BUG 1 · AccessCheck] accessCheck('granted') → '" +
+    accessCheck("granted") +
+    "'  (verwacht: 'ACCESS GRANTED')"
 );
 
 //-----------------------------------------
-// BUG: Hij lijkt niet goed te beginnen. :S
-// 5) Haalt elke Nde-element uit de lijst (n=1): [a,b,c,d,e], (n=2): [b,d]
+// BUG 2: De vermenigvuldiging rekent wel, maar er komt niks uit.
+// Het antwoord lijkt te verdwijnen in de functie…
+// 2) Multiply: vermenigvuldigt twee getallen: multiply(6, 7) wordt 42
 //-----------------------------------------
-function pickEveryNth(arr, n) {
-  const out = [];
-  for (let index = 0; index < arr.length; index += n) {
-    out.push(arr[index]);
-  }
-  return out;
+function multiply(a, b) {
+  const result = a * b;
 }
-// Open de browser console
 console.log(
-  "5) Pick every Nth (n=1): " + pickEveryNth(["a", "b", "c", "d", "e"], 1)
+  "[BUG 2 · Multiply] multiply(6, 7) → " +
+    multiply(6, 7) +
+    "  (verwacht: 42)"
 );
+
+//-----------------------------------------
+// BUG 3: Het laatste item van de lijst pakken lukt niet.
+// Er komt steeds 'undefined' uit. Waar staat het laatste item echt?
+// 3) LastItem: pakt het laatste element uit een lijst:
+//    getLast(["a", "b", "c"]) wordt "c"
+//-----------------------------------------
+function getLast(list) {
+  return list[list.length];
+}
 console.log(
-  "5) Pick every Nth (n=2): " + pickEveryNth(["a", "b", "c", "d", "e"], 2)
+  "[BUG 3 · LastItem] getLast(['a', 'b', 'c']) → " +
+    getLast(["a", "b", "c"]) +
+    "  (verwacht: c)"
+);
+
+//-----------------------------------------
+// BUG 4: Het gemiddelde klopt niet. Het gemiddelde van 2, 4, 6 en 8 moet
+// 5 zijn, maar er komt 14 uit?! Reken maar na…
+// 4) Average: berekent het gemiddelde van vier getallen
+//-----------------------------------------
+function average(a, b, c, d) {
+  return a + b + c + d / 4;
+}
+console.log(
+  "[BUG 4 · Average] average(2, 4, 6, 8) → " +
+    average(2, 4, 6, 8) +
+    "  (verwacht: 5)"
+);
+
+//-----------------------------------------
+// BUG 5: Het codewoord "openup" werkt alleen als je het precies zo
+// typt. Maar "OpenUp" en "OPENUP" moeten óók goedgekeurd worden.
+// 5) Keyword: checkt of de invoer het codewoord "openup" is,
+//    hoofdletters mogen geen verschil maken
+//-----------------------------------------
+function checkKeyword(input) {
+  return input === "openup";
+}
+console.log(
+  "[BUG 5 · Keyword] checkKeyword('OPENUP') → " +
+    checkKeyword("OPENUP") +
+    "  (verwacht: true)"
 );
 
 /* ========= Framework bits ========= */
@@ -90,49 +101,51 @@ const segment = document.querySelector(".seg");
 
 const TESTS = [
   {
-    id: "decoder",
-    name: "Decoder",
-    run: () => decodeShift("Qsftfou") === "Present",
-    h1: "Look at char codes.",
-    h2: "It’s a Caesar shift by 1. Wrong direction.",
-    h3: "Try - 1 instead of + 1",
-  },
-  {
-    id: "normalize",
-    name: "Normalizer",
+    id: "access",
+    name: "AccessCheck",
     run: () =>
-      normalize("  Hi  ").toLowerCase() === "hi" &&
-      normalize("WELCOME") === "welcome",
-    h1: "Whitespace & case matter.",
-    h2: "Use trim() and toLowerCase().",
-    h3: "Add trim().toLowerCase() to 's'",
+      accessCheck("granted") === "ACCESS GRANTED" &&
+      accessCheck("nope") === "ACCESS DENIED",
+    h1: "Computers compare letter by letter, exactly.",
+    h2: "Read the word inside the if-statement very carefully.",
+    h3: "Dev move: add console.log(status) inside the function, then compare the printed word letter by letter with the word in the if.",
   },
   {
-    id: "sum",
-    name: "Checksum",
-    run: () => checksum([1, 2, 3, 4]) === 10 && checksum([5]) === 5,
-    h1: "Fencepost alert.",
-    h2: "Loop should include the last element.",
-    h3: "The length is not correct",
+    id: "multiply",
+    name: "Multiply",
+    run: () => multiply(6, 7) === 42 && multiply(3, 5) === 15,
+    h1: "The math is fine, but nothing comes back out.",
+    h2: "A function must hand back its answer to the caller.",
+    h3: "Dev move: google 'javascript function gives undefined'. Then ask yourself: how does the answer get out of a function?",
   },
   {
-    id: "regex",
-    name: "Regex",
+    id: "last",
+    name: "LastItem",
+    run: () => getLast(["a", "b", "c"]) === "c" && getLast([7]) === 7,
+    h1: "Counting in a list starts at 0, not at 1.",
+    h2: "A list of 3 items has positions 0, 1 and 2.",
+    h3: "Dev move: experiment in the browser console. Type ['a','b','c'][0], then [1], [2], [3]. Which position holds the last item, and what is its relation to .length?",
+  },
+  {
+    id: "average",
+    name: "Average",
     run: () =>
-      isValidEmail("Student@hva.nl") && isValidEmail("dev.test+1@domain.io"),
-    h1: "Case-insensitive emails.",
-    h2: "Add the 'i' flag and allow uppercase letters.",
-    h3: "Add the 'i' at the end of the regex",
+      average(2, 4, 6, 8) === 5 && average(10, 0, 0, 0) === 2.5,
+    h1: "Division goes before addition (order of operations).",
+    h2: "Right now only the last number is divided by 4.",
+    h3: "Dev move: type 2 + 4 + 6 + 8 / 4 in the browser console. Not what you expected? Think back to math class: how do you force all additions to happen first?",
   },
   {
-    id: "nth",
-    name: "Every Nth",
+    id: "keyword",
+    name: "Keyword",
     run: () =>
-      JSON.stringify(pickEveryNth(["a", "b", "c", "d", "e"], 2)) ===
-      JSON.stringify(["b", "d"]),
-    h1: "Start offset is wrong.",
-    h2: "Begin at index n-1, not 0.",
-    h3: "Update the begining of the for-loop:`for (let index = 0;`",
+      checkKeyword("openup") &&
+      checkKeyword("OpenUp") &&
+      checkKeyword("OPENUP") &&
+      !checkKeyword("wrong"),
+    h1: "Uppercase and lowercase are different characters.",
+    h2: "Make the input lowercase before comparing.",
+    h3: "Dev move: google 'javascript compare strings ignore case'. Try your find on the input before the comparison.",
   },
 ];
 
@@ -224,7 +237,7 @@ function giveHint() {
     failing.forEach((t) => log(` - ${t.name}: ${t.h2}`));
     hintStage = 2;
   } else {
-    log("[HINT] Stronger hints:");
+    log("[HINT] Third wave — no more answers. Debug it like a developer:");
     failing.forEach((t) => log(` - ${t.name}: ${t.h3}`));
   }
 }
@@ -234,6 +247,7 @@ document.getElementById("hints").addEventListener("click", giveHint);
 
 // initial render
 renderTests([]);
+runAll();
 log("HvA SE // Console Gate initialized.");
 log("Team of five: each pick a role and fix your tiny defect in the JS.");
 log("When all tests pass, the segment will be hash-verified and revealed.");
