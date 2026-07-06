@@ -1,467 +1,693 @@
 <!DOCTYPE html>
 <html lang="nl">
-  <meta charset="utf-8" />
-  <title>Code Validation Terminal</title>
-  <style>
-    body {
-      font-family: "Courier New", monospace;
-      background: #0a0a0a;
-      color: #00ff00;
-      margin: 0;
-      padding: 20px;
-      line-height: 1.6;
-    }
-    .terminal {
-      background: #000;
-      border: 2px solid #00ff00;
-      border-radius: 8px;
-      padding: 20px;
-      max-width: 800px;
-      margin: 0 auto;
-      box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
-    }
-    .header {
-      text-align: center;
-      border-bottom: 1px solid #00ff00;
-      padding-bottom: 10px;
-      margin-bottom: 20px;
-    }
-    .ascii-art {
-      font-family: monospace;
-      white-space: pre;
-      text-align: center;
-      margin: 20px 0;
-      color: #00aa00;
-    }
-    .input-section {
-      margin: 20px 0;
-    }
-    .input-group {
-      display: flex;
-      gap: 10px;
-      margin: 10px 0;
-    }
-    input[type="text"] {
-      flex: 1;
-      background: #111;
-      border: 1px solid #00ff00;
-      color: #00ff00;
-      padding: 10px;
-      font-family: "Courier New", monospace;
-      border-radius: 4px;
-      font-size: 14px;
-    }
-    input[type="text"]:focus {
-      outline: none;
-      border-color: #00aa00;
-      box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
-    }
-    button {
-      background: #004400;
-      color: #00ff00;
-      border: 1px solid #00ff00;
-      padding: 10px 20px;
-      cursor: pointer;
-      font-family: "Courier New", monospace;
-      border-radius: 4px;
-      transition: all 0.2s;
-    }
-    button:hover {
-      background: #006600;
-      box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
-    }
-    .status {
-      margin: 10px 0;
-      padding: 10px;
-      border-radius: 4px;
-      font-weight: bold;
-    }
-    .status.success {
-      background: #004400;
-      border: 1px solid #00ff00;
-    }
-    .status.error {
-      background: #440000;
-      border: 1px solid #ff0000;
-      color: #ff6666;
-    }
-    .status.info {
-      background: #004444;
-      border: 1px solid #00ffff;
-      color: #00ffff;
-    }
-    .hint {
-      background: #222;
-      border-left: 3px solid #00ff00;
-      padding: 10px;
-      margin: 10px 0;
-      font-size: 14px;
-    }
-    .hidden {
-      display: none;
-    }
-    .matrix-rain {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: -2;
-      opacity: 0.05;
-    }
-    .matrix-bg {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: -1;
-      opacity: 0.1;
-    }
-    .matrix-char {
-      position: absolute;
-      color: #00ff00;
-      font-size: 12px;
-      animation: matrix-fall 3s linear infinite;
-    }
-    @keyframes matrix-fall {
-      0% {
-        transform: translateY(-100vh);
-        opacity: 1;
-      }
-      100% {
-        transform: translateY(100vh);
-        opacity: 0;
-      }
-    }
-    .progress-bar {
-      width: 100%;
-      height: 20px;
-      background: #111;
-      border: 1px solid #00ff00;
-      border-radius: 10px;
-      overflow: hidden;
-      margin: 10px 0;
-    }
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #00ff00, #00aa00);
-      width: 0%;
-      transition: width 0.5s;
-    }
-    .validation-grid {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 5px;
-      margin: 20px 0;
-      background: #111;
-      padding: 10px;
-      border-radius: 4px;
-    }
-    .validation-cell {
-      background: #222;
-      border: 1px solid #333;
-      padding: 8px;
-      text-align: center;
-      font-size: 12px;
-      min-height: 30px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s;
-    }
-    .validation-cell input {
-      width: 100%;
-      background: transparent;
-      border: none;
-      color: #00ff00;
-      text-align: center;
-      font-family: "Courier New", monospace;
-      font-size: 12px;
-      outline: none;
-    }
-    .validation-cell input:focus {
-      background: #333;
-    }
-    .validation-cell.correct {
-      background: #004400;
-      border-color: #00ff00;
-    }
-    .validation-cell.incorrect {
-      background: #333;
-      border-color: #666;
-    }
-    .validation-cell.pending {
-      background: #333;
-      border-color: #666;
-    }
-    .code-result {
-      background: #111;
-      border: 1px solid #00ff00;
-      padding: 15px;
-      margin: 20px 0;
-      text-align: center;
-      border-radius: 4px;
-    }
-    .code-result h3 {
-      margin: 0 0 10px 0;
-      color: #00ff00;
-    }
-    .code-display {
-      font-size: 24px;
-      font-weight: bold;
-      color: #00ff00;
-      letter-spacing: 2px;
-      margin: 10px 0;
-    }
-  </style>
-  <body>
-    <div class="matrix-bg" id="matrix-bg"></div>
-    <div class="matrix-rain" id="matrix-rain"></div>
-
-    <div class="terminal">
-      <div class="header">
-        <h1>🔐 CODE VALIDATION TERMINAL v1.0 🔐</h1>
-        <p>Root access verification required</p>
-      </div>
-
-      <div class="ascii-art">
-        <pre>
-          ╔══════════════════════════════════════════════════════════════╗
-          ║                  ROOT ACCESS VALIDATION                      ║
-          ║ ████████████████████████████████████████████████████████████ ║
-          ║ █░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░█ ║
-          ║ █░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░█ ║
-          ║ █░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░█ ║
-          ║ ████████████████████████████████████████████████████████████ ║
-          ╚══════════════════════════════════════════════════════════════╝
-        </pre>
-      </div>
-
-      <div class="hint" id="current-hint">
-        <strong>🔍 VALIDATION READY:</strong> Fill in the validation cells to
-        generate your access code.
-      </div>
-
-      <div class="validation-grid" id="validation-grid">
-        <div class="validation-cell pending" data-segment="1">
-          <input type="text" placeholder="SEG1" maxlength="10" data-index="0" />
-        </div>
-        <div class="validation-cell pending" data-segment="2">
-          <input type="text" placeholder="SEG2" maxlength="10" data-index="1" />
-        </div>
-        <div class="validation-cell pending" data-segment="3">
-          <input type="text" placeholder="SEG3" maxlength="10" data-index="2" />
-        </div>
-        <div class="validation-cell pending" data-segment="4">
-          <input type="text" placeholder="SEG4" maxlength="10" data-index="3" />
-        </div>
-        <div class="validation-cell pending" data-segment="5">
-          <input type="text" placeholder="SEG5" maxlength="10" data-index="4" />
-        </div>
-      </div>
-
-      <div class="code-result" id="code-result">
-        <h3>🔢 GENERATED ACCESS CODE</h3>
-        <div class="code-display" id="code-display">****</div>
-        <p>Enter values in the validation cells above to generate your code</p>
-      </div>
-
-      <div class="input-section">
-        <div class="input-group">
-          <button onclick="clearAll()">Clear All</button>
-        </div>
-      </div>
-    </div>
-
-    <script>
-      // Matrix background effect
-      function createMatrixEffect() {
-        const bg = document.getElementById("matrix-bg");
-        const chars =
-          "01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
-
-        setInterval(() => {
-          const char = document.createElement("div");
-          char.className = "matrix-char";
-          char.textContent = chars[Math.floor(Math.random() * chars.length)];
-          char.style.left = Math.random() * 100 + "%";
-          char.style.animationDelay = Math.random() * 3 + "s";
-          bg.appendChild(char);
-
-          setTimeout(() => char.remove(), 3000);
-        }, 100);
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HvA Central Mainframe</title>
+    <style>
+      :root {
+        --amber: #ffb000;
+        --amber-dim: #b37c00;
+        --amber-faint: rgba(255, 176, 0, 0.15);
+        --bg: #0d0802;
+        --panel: #16100a;
+        --ok: #4dff88;
+        --err: #ff5555;
       }
 
-      // Matrix rain effect
-      function createMatrixRain() {
-        const rain = document.getElementById("matrix-rain");
-        const messages = [
-          "VALIDATION REQUIRED",
-          "ACCESS CODE",
-          "ROOT ACCESS",
-          "CORE SYSTEM",
-          "VALIDATION GRID",
-          "SEGMENT VERIFICATION",
-        ];
-
-        setInterval(() => {
-          const message = document.createElement("div");
-          message.style.position = "absolute";
-          message.style.color = "#00ff00";
-          message.style.fontSize = "10px";
-          message.style.left = Math.random() * 100 + "%";
-          message.style.top = "-20px";
-          message.style.opacity = "0.3";
-          message.style.pointerEvents = "none";
-          message.textContent =
-            messages[Math.floor(Math.random() * messages.length)];
-          rain.appendChild(message);
-
-          // Animate falling
-          let pos = -20;
-          const fall = setInterval(() => {
-            pos += 1;
-            message.style.top = pos + "px";
-            if (pos > window.innerHeight) {
-              clearInterval(fall);
-              message.remove();
-            }
-          }, 50);
-        }, 2000);
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
       }
 
-      // Secret code (hidden from user)
-      const secretCode = `${atob("RU5HSU5FRVI=")}-${atob(
-        "UFJFU0VOVA=="
-      )}-${atob("RlVUVVJF")}-${atob("T1JJR0lO")}-${atob("QU1TVEVSREFN")}`;
-      const correctFourDigitCode = "NDM4";
+      body {
+        font-family: "Courier New", monospace;
+        background: var(--bg);
+        color: var(--amber);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow-x: hidden;
+      }
 
-      // Generate 4-digit code based on input
-      function generateCode() {
-        const inputs = document.querySelectorAll("#validation-grid input");
-        const codeDisplay = document.getElementById("code-display");
-        const status = document.getElementById("status");
-
-        // Get all input values
-        const inputValues = Array.from(inputs).map((input) =>
-          input.value.trim().toUpperCase()
+      /* CRT scanlines + vignette */
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background: repeating-linear-gradient(
+          to bottom,
+          rgba(0, 0, 0, 0) 0px,
+          rgba(0, 0, 0, 0) 2px,
+          rgba(0, 0, 0, 0.25) 3px
         );
-        const combinedInput = inputValues.join("-");
+        pointer-events: none;
+        z-index: 10;
+      }
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background: radial-gradient(
+          ellipse at center,
+          transparent 55%,
+          rgba(0, 0, 0, 0.55) 100%
+        );
+        pointer-events: none;
+        z-index: 11;
+      }
 
-        // Check if the secret code was entered
-        if (combinedInput === secretCode) {
-          // Show the correct 4-digit code
-          codeDisplay.textContent = atob(correctFourDigitCode);
-
-          // Mark all cells as correct
-          inputs.forEach((input, index) => {
-            const cell = input.parentElement;
-            cell.className = "validation-cell correct";
-          });
-        } else {
-          // Generate a random 4-digit code that is never the correct one
-          let randomCode;
-          do {
-            randomCode = Math.floor(100 + Math.random() * 900).toString();
-          } while (randomCode == atob(correctFourDigitCode));
-
-          codeDisplay.textContent = randomCode;
+      .mainframe-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 24px;
+        border-bottom: 2px solid var(--amber-dim);
+        background: var(--panel);
+        font-size: 13px;
+        letter-spacing: 1px;
+      }
+      .mainframe-header .title {
+        font-weight: bold;
+        font-size: 15px;
+        text-shadow: 0 0 8px rgba(255, 176, 0, 0.6);
+      }
+      .mainframe-header .sys-status {
+        color: var(--err);
+        animation: blink 1.4s step-end infinite;
+      }
+      .mainframe-header .sys-status.online {
+        color: var(--ok);
+        animation: none;
+      }
+      @keyframes blink {
+        50% {
+          opacity: 0.25;
         }
       }
 
-      // Clear all inputs
-      function clearAll() {
-        const inputs = document.querySelectorAll("#validation-grid input");
-        inputs.forEach((input) => {
-          input.value = "";
-          const cell = input.parentElement;
-          cell.className = "validation-cell pending";
-        });
-
-        document.getElementById("code-display").textContent = "***";
-        document.getElementById("progress-fill").style.width = "0%";
-        document.getElementById("status").textContent = "";
-        document.getElementById("success-message").classList.add("hidden");
+      main {
+        flex: 1;
+        width: 100%;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 14px 20px 16px;
       }
 
-      // Show status message
-      function showStatus(message, type) {
-        const status = document.getElementById("status");
-        status.textContent = message;
-        status.className = `status ${type}`;
+      .layout {
+        display: grid;
+        grid-template-columns: 3fr 2fr;
+        gap: 18px;
+        align-items: stretch;
       }
 
-      // Initialize everything
+      .boot-log {
+        font-size: 12px;
+        line-height: 1.5;
+        color: var(--amber-dim);
+        margin-bottom: 12px;
+        min-height: 90px;
+        white-space: pre-wrap;
+      }
+      .boot-log .ok {
+        color: var(--ok);
+      }
+      .boot-log .warn {
+        color: var(--err);
+      }
+
+      .frame {
+        border: 2px solid var(--amber-dim);
+        background: var(--panel);
+        box-shadow: 0 0 30px rgba(255, 176, 0, 0.08),
+          inset 0 0 40px rgba(255, 176, 0, 0.03);
+        padding: 16px 18px;
+      }
+
+      .frame-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 12px;
+        letter-spacing: 3px;
+        margin-bottom: 12px;
+        color: var(--amber);
+        text-transform: uppercase;
+      }
+      .frame-title::before,
+      .frame-title::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: var(--amber-dim);
+      }
+
+      /* Segment slots */
+      .segment-row {
+        display: grid;
+        grid-template-columns: 14px 165px 1fr;
+        gap: 10px;
+        align-items: center;
+        padding: 6px 4px;
+        border-bottom: 1px dashed rgba(255, 176, 0, 0.2);
+      }
+      .segment-row:last-of-type {
+        border-bottom: none;
+      }
+
+      .led {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #332200;
+        border: 1px solid var(--amber-dim);
+        transition: all 0.3s;
+      }
+      .segment-row.filled .led {
+        background: var(--amber);
+        box-shadow: 0 0 8px var(--amber);
+      }
+      .segment-row.locked-in .led {
+        background: var(--ok);
+        border-color: var(--ok);
+        box-shadow: 0 0 10px var(--ok);
+      }
+
+      .segment-label {
+        font-size: 12px;
+        letter-spacing: 1px;
+        line-height: 1.5;
+      }
+      .segment-label .num {
+        color: var(--amber-dim);
+        display: block;
+        font-size: 10px;
+      }
+
+      .segment-row input {
+        width: 100%;
+        background: #0a0600;
+        border: 1px solid var(--amber-dim);
+        color: var(--amber);
+        padding: 7px 12px;
+        font-family: "Courier New", monospace;
+        font-size: 14px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        caret-color: var(--amber);
+      }
+      .segment-row input:focus {
+        outline: none;
+        border-color: var(--amber);
+        box-shadow: 0 0 12px var(--amber-faint);
+      }
+      .segment-row input::placeholder {
+        color: rgba(255, 176, 0, 0.25);
+        letter-spacing: 2px;
+      }
+
+      .buffer-bar {
+        margin-top: 12px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 11px;
+        letter-spacing: 2px;
+        color: var(--amber-dim);
+      }
+      .buffer-track {
+        flex: 1;
+        height: 14px;
+        border: 1px solid var(--amber-dim);
+        background: #0a0600;
+        position: relative;
+        overflow: hidden;
+      }
+      .buffer-fill {
+        height: 100%;
+        width: 0%;
+        background: repeating-linear-gradient(
+          90deg,
+          var(--amber) 0 8px,
+          transparent 8px 12px
+        );
+        transition: width 0.4s;
+      }
+
+      .actions {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        margin-top: 14px;
+        flex-wrap: wrap;
+      }
+      button {
+        background: #241804;
+        color: var(--amber);
+        border: 2px solid var(--amber-dim);
+        padding: 10px 22px;
+        cursor: pointer;
+        font-family: "Courier New", monospace;
+        font-size: 13px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        transition: all 0.2s;
+      }
+      button:hover:not(:disabled) {
+        border-color: var(--amber);
+        box-shadow: 0 0 16px var(--amber-faint);
+        text-shadow: 0 0 6px rgba(255, 176, 0, 0.8);
+      }
+      button:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+      }
+      button.secondary {
+        font-size: 11px;
+        padding: 10px 14px;
+      }
+
+      /* Code output */
+      .code-panel {
+        text-align: center;
+      }
+      .code-digits {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        margin: 14px 0 10px;
+      }
+      .digit {
+        width: 58px;
+        height: 78px;
+        border: 2px solid var(--amber-dim);
+        background: #0a0600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 44px;
+        font-weight: bold;
+        color: rgba(255, 176, 0, 0.25);
+        text-shadow: none;
+        transition: all 0.3s;
+      }
+      .code-panel.generated .digit {
+        color: var(--amber);
+        text-shadow: 0 0 14px rgba(255, 176, 0, 0.8);
+        border-color: var(--amber);
+      }
+      .code-panel.online .digit {
+        color: var(--ok);
+        border-color: var(--ok);
+        text-shadow: 0 0 16px rgba(77, 255, 136, 0.8);
+        animation: digit-pulse 1.6s ease-in-out infinite;
+      }
+      @keyframes digit-pulse {
+        0%,
+        100% {
+          box-shadow: 0 0 8px rgba(77, 255, 136, 0.3);
+        }
+        50% {
+          box-shadow: 0 0 24px rgba(77, 255, 136, 0.9);
+        }
+      }
+      .code-note {
+        font-size: 12px;
+        color: var(--amber-dim);
+        letter-spacing: 1px;
+        min-height: 18px;
+      }
+      .code-panel.online .code-note {
+        color: var(--ok);
+      }
+
+      .system-msg {
+        margin-top: 14px;
+        font-size: 13px;
+        letter-spacing: 1px;
+        min-height: 20px;
+        text-align: center;
+      }
+      .system-msg.busy {
+        color: var(--amber);
+      }
+      .system-msg.online {
+        color: var(--ok);
+        text-shadow: 0 0 8px rgba(77, 255, 136, 0.5);
+      }
+
+      /* success banner */
+      .online-banner {
+        display: none;
+        margin-top: 14px;
+        border: 2px solid var(--ok);
+        color: var(--ok);
+        text-align: center;
+        padding: 10px;
+        font-size: 12px;
+        letter-spacing: 2px;
+        animation: digit-pulse 1.6s ease-in-out infinite;
+      }
+      body.system-online .online-banner {
+        display: block;
+      }
+
+      .footer-note {
+        text-align: center;
+        font-size: 10px;
+        color: rgba(255, 176, 0, 0.35);
+        padding: 8px;
+        letter-spacing: 2px;
+      }
+
+      @media (max-width: 900px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .segment-row {
+          grid-template-columns: 14px 1fr;
+        }
+        .segment-row input {
+          grid-column: 1 / -1;
+        }
+        .digit {
+          width: 50px;
+          height: 68px;
+          font-size: 38px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="mainframe-header">
+      <div class="title">▚▚ HvA CENTRAL MAINFRAME ▞▞</div>
+      <div>BOOT RECOVERY CONSOLE v5.0</div>
+      <div class="sys-status" id="sys-status">SYSTEM: RECOVERY MODE</div>
+    </header>
+
+    <main>
+      <div class="boot-log" id="boot-log"></div>
+
+      <div class="layout">
+      <section class="frame">
+        <div class="frame-title">Segment Buffer — Insert Boot Segments</div>
+
+        <div class="segment-row" data-slot="1">
+          <div class="led"></div>
+          <div class="segment-label">
+            <span class="num">SEGMENT 01</span>BOOT-SECTOR
+          </div>
+          <input type="text" maxlength="16" autocomplete="off" spellcheck="false" placeholder="................" aria-label="Segment 1: Boot-Sector" />
+        </div>
+
+        <div class="segment-row" data-slot="2">
+          <div class="led"></div>
+          <div class="segment-label">
+            <span class="num">SEGMENT 02</span>CONSOLE GATE
+          </div>
+          <input type="text" maxlength="16" autocomplete="off" spellcheck="false" placeholder="................" aria-label="Segment 2: Console Gate" />
+        </div>
+
+        <div class="segment-row" data-slot="3">
+          <div class="led"></div>
+          <div class="segment-label">
+            <span class="num">SEGMENT 03</span>CRYPTO LOCK
+          </div>
+          <input type="text" maxlength="16" autocomplete="off" spellcheck="false" placeholder="................" aria-label="Segment 3: Crypto Lock" />
+        </div>
+
+        <div class="segment-row" data-slot="4">
+          <div class="led"></div>
+          <div class="segment-label">
+            <span class="num">SEGMENT 04</span>BRANCH ADVENTURE
+          </div>
+          <input type="text" maxlength="16" autocomplete="off" spellcheck="false" placeholder="................" aria-label="Segment 4: Branch Adventure" />
+        </div>
+
+        <div class="segment-row" data-slot="5">
+          <div class="led"></div>
+          <div class="segment-label">
+            <span class="num">SEGMENT 05</span>???
+          </div>
+          <input type="text" maxlength="16" autocomplete="off" spellcheck="false" placeholder="................" aria-label="Segment 5: Unknown" />
+        </div>
+
+        <div class="buffer-bar">
+          <span>BUFFER</span>
+          <div class="buffer-track"><div class="buffer-fill" id="buffer-fill"></div></div>
+          <span id="buffer-count">0/5</span>
+        </div>
+
+        <div class="actions">
+          <button id="btn-boot">⏻ Initiate Boot Sequence</button>
+          <button id="btn-clear" class="secondary">Flush Buffer</button>
+        </div>
+
+        <div class="system-msg" id="system-msg"></div>
+      </section>
+
+      <section class="frame code-panel" id="code-panel">
+        <div class="frame-title">Boot Key Output</div>
+        <div class="code-digits">
+          <div class="digit">·</div>
+          <div class="digit">·</div>
+          <div class="digit">·</div>
+        </div>
+        <div class="code-note" id="code-note">
+          AWAITING SEGMENTS — INSERT ALL 5 TO GENERATE BOOT KEY
+        </div>
+        <div class="online-banner">
+          ★ SYSTEM RESTORED — BOOT SEQUENCE COMPLETE ★<br />
+          USE THE BOOT KEY ON THE PHYSICAL LOCK
+        </div>
+      </section>
+      </div>
+    </main>
+
+    <div class="footer-note">HVA-MF-05 // AUTHORIZED PERSONNEL ONLY</div>
+
+    <script>
+      "use strict";
+
+      /*
+       * Validation is hash-based on purpose: neither the segments nor the
+       * boot key exist anywhere in this source. The key is XOR-encrypted
+       * with the SHA-256 digest of the correct segment chain, so it can
+       * only be decrypted by entering the right segments.
+       */
+      const VAULT = {
+        digestHex:
+          "352647019eb004980091050113f69c2e66750ed038b109b2f93061319b199df6",
+        encryptedKey: "ARV/",
+      };
+
+      // How long the mainframe stays silent about a correct entry, so teams
+      // go test the key at the physical lock before the reveal spoils it.
+      const REVEAL_DELAY_MS = 5 * 60 * 1000;
+      let revealTimer = null;
+
+      const rows = Array.from(document.querySelectorAll(".segment-row"));
+      const inputs = rows.map((row) => row.querySelector("input"));
+      const bufferFill = document.getElementById("buffer-fill");
+      const bufferCount = document.getElementById("buffer-count");
+      const systemMsg = document.getElementById("system-msg");
+      const codePanel = document.getElementById("code-panel");
+      const codeNote = document.getElementById("code-note");
+      const digits = Array.from(codePanel.querySelectorAll(".digit"));
+      const sysStatus = document.getElementById("sys-status");
+      const btnBoot = document.getElementById("btn-boot");
+      const btnClear = document.getElementById("btn-clear");
+
+      async function sha256Bytes(text) {
+        const data = new TextEncoder().encode(text);
+        const buf = await crypto.subtle.digest("SHA-256", data);
+        return new Uint8Array(buf);
+      }
+
+      const toHex = (bytes) =>
+        Array.from(bytes)
+          .map((b) => b.toString(16).padStart(2, "0"))
+          .join("");
+
+      function getChain() {
+        return inputs.map((el) => el.value.trim().toUpperCase()).join("-");
+      }
+
+      function updateBuffer() {
+        const filled = inputs.filter((el) => el.value.trim() !== "").length;
+        rows.forEach((row, i) =>
+          row.classList.toggle("filled", inputs[i].value.trim() !== "")
+        );
+        bufferFill.style.width = (filled / inputs.length) * 100 + "%";
+        bufferCount.textContent = `${filled}/${inputs.length}`;
+        return filled;
+      }
+
+      function showDigits(code) {
+        digits.forEach((d, i) => (d.textContent = code[i] ?? "·"));
+      }
+
+      function typeMessage(el, text, cls) {
+        el.className = `system-msg ${cls || ""}`;
+        el.textContent = text;
+      }
+
+      function revealSystemOnline() {
+        codePanel.classList.add("online");
+        document.body.classList.add("system-online");
+        rows.forEach((row) => row.classList.add("locked-in"));
+        sysStatus.textContent = "SYSTEM: ONLINE";
+        sysStatus.classList.add("online");
+        codeNote.textContent = "BOOT KEY VERIFIED — SYSTEM RESTORED";
+        typeMessage(
+          systemMsg,
+          "[BOOT] ALL SEGMENTS ACCEPTED. WELCOME BACK.",
+          "online"
+        );
+      }
+
+      async function initiateBoot() {
+        const filled = updateBuffer();
+        if (filled < inputs.length) {
+          typeMessage(
+            systemMsg,
+            `[ERROR] SEGMENT BUFFER INCOMPLETE (${filled}/5)`,
+            "busy"
+          );
+          return;
+        }
+
+        btnBoot.disabled = true;
+        clearTimeout(revealTimer);
+        codePanel.classList.remove("generated", "online");
+        showDigits("···");
+        typeMessage(systemMsg, "[BOOT] VERIFYING SEGMENT CHECKSUMS…", "busy");
+        await sleep(700);
+        typeMessage(systemMsg, "[BOOT] COMPILING BOOT KEY…", "busy");
+        await sleep(700);
+
+        // suspenseful digit scramble
+        const scramble = setInterval(() => {
+          showDigits(String(Math.floor(100 + Math.random() * 900)));
+        }, 60);
+        await sleep(1400);
+        clearInterval(scramble);
+
+        const hash = await sha256Bytes(getChain());
+        const correct = toHex(hash) === VAULT.digestHex;
+
+        if (correct) {
+          const enc = Uint8Array.from(atob(VAULT.encryptedKey), (c) =>
+            c.charCodeAt(0)
+          );
+          const key = Array.from(enc)
+            .map((b, i) => String.fromCharCode(b ^ hash[i]))
+            .join("");
+
+          // Present the real key exactly like a decoy: no green, no tell.
+          // The celebration only fires after the delay, once the team has
+          // (hopefully) already tried the key on the physical lock.
+          showDigits(key);
+          codePanel.classList.add("generated");
+          codeNote.textContent = "BOOT KEY GENERATED — VERIFY AT PHYSICAL LOCK";
+          typeMessage(systemMsg, "[BOOT] KEY COMPILED FROM SEGMENT BUFFER.", "");
+
+          clearTimeout(revealTimer);
+          revealTimer = setTimeout(revealSystemOnline, REVEAL_DELAY_MS);
+        } else {
+          // Deterministic decoy: same wrong chain always yields the same key,
+          // and only the physical lock can tell it apart from the real one.
+          const decoyHash = await sha256Bytes("MF05::" + getChain());
+          const decoy = String(
+            100 + (((decoyHash[0] << 8) | decoyHash[1]) % 900)
+          );
+          showDigits(decoy);
+          codePanel.classList.add("generated");
+          codeNote.textContent = "BOOT KEY GENERATED — VERIFY AT PHYSICAL LOCK";
+          typeMessage(systemMsg, "[BOOT] KEY COMPILED FROM SEGMENT BUFFER.", "");
+        }
+
+        btnBoot.disabled = false;
+      }
+
+      function flushBuffer() {
+        clearTimeout(revealTimer);
+        inputs.forEach((el) => (el.value = ""));
+        rows.forEach((row) => row.classList.remove("locked-in"));
+        codePanel.classList.remove("generated", "online");
+        document.body.classList.remove("system-online");
+        sysStatus.textContent = "SYSTEM: RECOVERY MODE";
+        sysStatus.classList.remove("online");
+        showDigits("···");
+        codeNote.textContent =
+          "AWAITING SEGMENTS — INSERT ALL 5 TO GENERATE BOOT KEY";
+        typeMessage(systemMsg, "[SYS] SEGMENT BUFFER FLUSHED.", "");
+        updateBuffer();
+        inputs[0].focus();
+      }
+
+      const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+      // Intro boot log
+      async function playBootLog() {
+        const log = document.getElementById("boot-log");
+        const lines = [
+          ["HVA-MF-05 POWER-ON SELF TEST……………… <span class='ok'>OK</span>"],
+          ["MEMORY BANKS 640K……………………………… <span class='ok'>OK</span>"],
+          ["BOOT SEQUENCE INTEGRITY………………………… <span class='warn'>FAILED</span>"],
+          ["CAUSE: 5 BOOT SEGMENTS MISSING FROM BUFFER"],
+          ["ACTION: RECOVER SEGMENTS AND INSERT BELOW IN ORDER"],
+        ];
+        for (const [line] of lines) {
+          const div = document.createElement("div");
+          div.innerHTML = "&gt; " + line;
+          log.appendChild(div);
+          await sleep(350);
+        }
+      }
+
       document.addEventListener("DOMContentLoaded", () => {
-        createMatrixEffect();
-        createMatrixRain();
+        playBootLog();
+        updateBuffer();
+        inputs[0].focus();
 
-        // Add event listeners to inputs
-        const inputs = document.querySelectorAll("#validation-grid input");
-        inputs.forEach((input) => {
-          input.addEventListener("keypress", (e) => {
-            if (e.key === "Enter") {
-              generateCode();
-            }
-          });
-
-          input.addEventListener("input", () => {
-            // Auto-generate code when all fields have values
-            const allFilled = Array.from(inputs).every(
-              (input) => input.value.trim() !== ""
-            );
-            if (allFilled) {
-              generateCode();
+        inputs.forEach((el, i) => {
+          el.addEventListener("input", updateBuffer);
+          el.addEventListener("keydown", (e) => {
+            if (e.key !== "Enter") return;
+            if (i < inputs.length - 1) {
+              inputs[i + 1].focus();
+            } else {
+              initiateBoot();
             }
           });
         });
 
-        // Add console hints
-        console.log(
-          "%c🔐 CODE VALIDATION TERMINAL 🔐",
-          "color: #00ff00; font-size: 20px; font-weight: bold;"
-        );
-        console.log(
-          "%cType 'help()' in console for assistance",
-          "color: #00aa00; font-size: 14px;"
-        );
+        btnBoot.addEventListener("click", initiateBoot);
+        btnClear.addEventListener("click", flushBuffer);
 
-        // Add global help function
+        console.log(
+          "%c▚▚ HVA CENTRAL MAINFRAME ▞▞",
+          "color: #ffb000; font-size: 20px; font-weight: bold;"
+        );
+        console.log(
+          "%cNice try. The segments are not in here — go earn them. 🔍",
+          "color: #b37c00; font-size: 13px;"
+        );
         window.help = function () {
           console.log(
-            "%c=== VALIDATION ASSISTANCE ===",
-            "color: #00ff00; font-weight: bold;"
+            "%c[MF-05] Insert the 5 recovered segments in order (1→5).",
+            "color: #ffb000;"
           );
           console.log(
-            "%cFill in the validation cells to generate your access code",
-            "color: #00aa00;"
-          );
-          console.log(
-            "%cThe correct code is generated when everything is filled",
-            "color: #00aa00;"
-          );
-          console.log(
-            "%cEach cell represents a segment of the validation process",
-            "color: #00aa00;"
+            "%c[MF-05] Segment 5 hides where you least expect it. Look back.",
+            "color: #ffb000;"
           );
         };
-
-        // Add keyboard shortcuts
-        document.addEventListener("keydown", (e) => {
-          // Ctrl+Shift+G for generate
-          if (e.ctrlKey && e.shiftKey && e.key === "G") {
-            e.preventDefault();
-            generateCode();
-          }
-          // Ctrl+Shift+C for clear
-          if (e.ctrlKey && e.shiftKey && e.key === "C") {
-            e.preventDefault();
-            clearAll();
-          }
-        });
       });
     </script>
   </body>
