@@ -630,7 +630,7 @@ document.addEventListener("DOMContentLoaded", () => {
       "color: #00aa00;"
     );
     console.log(
-      "%c2. Layer 2: Mathematical transformations reveal new coordinates",
+      "%c2. Layer 2: Mathematical transformations for the sequence to reveal new coordinates",
       "color: #ff0000;"
     );
     console.log("%c3. Layer 2: Look for the hidden word", "color: #ff0000;");
