@@ -1,7 +1,7 @@
 const CONFIG = {
   expectedDigestHex:
-    "c87b55c5c6208cb204da80594103f78963ad4aa7c4c4959a71655b0b3723b04e",
-  encryptedSegment: "hykcgo9u",
+    "2246afd5234815a05498acab2b4b25be948bcdf9913307f4dcffb2efdc21acd4",
+  encryptedSegment: "bRTmkmoG",
   nextUrl:
     "aHR0cHM6Ly9yb3lzcHJpbmdlci5naXRodWIuaW8vYm9vdC1zZWN0b3IvY29kZV92YWxpZGF0aW9u",
 };

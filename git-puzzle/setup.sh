@@ -6,7 +6,7 @@ git init -b main
 # ---------------------------------------------------------------
 # COLD CASE #042: DE VERDWENEN DEVELOPER
 #
-# Doel: achternaam ontvoerder = KRANENBURG (9 letters, moeilijk te raden)
+# Doel: achternaam ontvoerder = KRANENBUG (9 letters, moeilijk te raden)
 # Segment voor boot-run = ORIGIN (via p4_forensisch_lab)
 #
 # main = ALLEEN README (1 commit)
@@ -21,7 +21,7 @@ git init -b main
 #   7. B   tag bewijszak-12
 #   8. U   forensisch-lab
 #   9. G   forensisch-lab
-#   → p4_forensisch_lab: KRANENBURG → ORIGIN
+#   → p4_forensisch_lab: KRANENBUG → ORIGIN
 #
 # Rode haring: P op magazijn (ZAAK #037, naam POLSTRA)
 # ---------------------------------------------------------------
@@ -598,7 +598,7 @@ Beschrijving: kopieer `docent/MR-beschrijving-042.txt`
 | 7 | B | tag `bewijszak-12` | Tags |
 | 8 | U | `forensisch-lab` | Branches |
 | 9 | G | `forensisch-lab` | Branches |
-| → | **KRANENBURG** | alle fragmenten | — |
+| → | **KRANENBUG** | alle fragmenten | — |
 | → | **ORIGIN** | `p4_forensisch_lab` | Tool / browser |
 
 Rode haring: `magazijn` (P, POLSTRA, zaak #037)
@@ -606,7 +606,7 @@ EOF
 
 echo
 echo "✅ Local repo ready."
-echo "   Achternaam ontvoerder: KRANENBURG (9 fragmenten)"
+echo "   Achternaam ontvoerder: KRANENBUG (9 fragmenten)"
 echo "   Boot-run segment:      ORIGIN (via p4_forensisch_lab)"
 echo
 echo "Volgende stappen:"

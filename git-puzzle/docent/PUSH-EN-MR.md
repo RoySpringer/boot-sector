@@ -27,7 +27,7 @@ Beschrijving: kopieer `docent/MR-beschrijving-042.txt`
 | 7 | B | tag `bewijszak-12` | Tags |
 | 8 | U | `forensisch-lab` | Branches |
 | 9 | G | `forensisch-lab` | Branches |
-| → | **KRANENBURG** | alle fragmenten | — |
+| → | **KRANENBUG** | alle fragmenten | — |
 | → | **ORIGIN** | `p4_forensisch_lab` | Tool / browser |
 
 Rode haring: `magazijn` (P, POLSTRA, zaak #037)

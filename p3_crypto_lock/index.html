@@ -1,24 +1,31 @@
 <!DOCTYPE html>
 <html lang="nl">
   <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Crypto Lock</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
     body {
       font-family: "Courier New", monospace;
       background: #0a0a0a;
       color: #00ff00;
       margin: 0;
-      padding: 20px;
-      line-height: 1.6;
+      padding: 12px;
+      line-height: 1.4;
+      min-height: 100vh;
     }
     .terminal {
       background: #000;
       border: 2px solid #00ff00;
-      border-radius: 8px;
-      padding: 20px;
-      max-width: 800px;
+      border-radius: 16px;
+      padding: 16px;
+      max-width: 1180px;
       margin: 0 auto;
       box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+      position: relative;
+      overflow: hidden;
     }
     .terminal.red {
       border-color: #ff0000;
@@ -38,38 +45,103 @@
         box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
       }
     }
-    .header {
-      text-align: center;
-      border-bottom: 1px solid #00ff00;
+    .shell-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
       padding-bottom: 10px;
-      margin-bottom: 20px;
+      margin-bottom: 14px;
+      border-bottom: 1px solid rgba(0, 255, 0, 0.25);
+    }
+    .topbar-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0;
+    }
+    .eyebrow {
+      color: #66ff99;
+      font-size: 11px;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+    }
+    .header {
+      text-align: left;
+      margin: 0;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: clamp(24px, 2.5vw, 34px);
+      line-height: 1.1;
+    }
+    .header p {
+      margin: 4px 0 0;
+      color: #8afcae;
+      font-size: 13px;
+    }
+    .terminal-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+      gap: 14px;
+      align-items: start;
+    }
+    .primary-panel,
+    .sidebar-panel {
+      min-width: 0;
+    }
+    .panel {
+      background: rgba(0, 255, 0, 0.05);
+      border: 1px solid rgba(0, 255, 0, 0.18);
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 12px;
+      backdrop-filter: blur(2px);
+    }
+    .panel:last-child {
+      margin-bottom: 0;
+    }
+    .panel-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #8afcae;
+    }
+    .compact-copy {
+      color: #b8ffcb;
+      font-size: 13px;
+      margin: 0 0 8px;
     }
     .crypto-grid {
       display: grid;
       grid-template-columns: repeat(8, 1fr);
-      gap: 1px;
-      margin: 20px 0;
+      gap: 4px;
+      margin: 0;
       background: #111;
-      padding: 8px;
-      border-radius: 4px;
-      max-width: 500px;
-      margin-left: auto;
-      margin-right: auto;
+      padding: 10px;
+      border-radius: 10px;
+      max-width: 100%;
       position: relative;
     }
     .crypto-cell {
       background: #222;
       border: 1px solid #333;
-      padding: 6px;
+      padding: 4px;
       text-align: center;
       font-size: 10px;
       cursor: pointer;
       transition: all 0.2s;
-      min-height: 20px;
+      min-height: 38px;
       display: flex;
       align-items: center;
       justify-content: center;
       position: relative;
+      border-radius: 6px;
     }
     .coordinate-label {
       position: absolute;
@@ -105,21 +177,22 @@
       color: #fff;
     }
     .input-section {
-      margin: 20px 0;
+      margin: 0;
     }
     .input-group {
       display: flex;
-      gap: 10px;
-      margin: 10px 0;
+      gap: 8px;
+      margin: 8px 0 0;
     }
     input[type="text"] {
       flex: 1;
       background: #111;
       border: 1px solid #00ff00;
       color: #00ff00;
-      padding: 10px;
+      padding: 10px 12px;
       font-family: "Courier New", monospace;
-      border-radius: 4px;
+      border-radius: 8px;
+      min-width: 0;
     }
     input[type="text"]:focus {
       outline: none;
@@ -130,21 +203,25 @@
       background: #004400;
       color: #00ff00;
       border: 1px solid #00ff00;
-      padding: 10px 20px;
+      padding: 10px 14px;
       cursor: pointer;
       font-family: "Courier New", monospace;
-      border-radius: 4px;
+      border-radius: 8px;
       transition: all 0.2s;
+      white-space: nowrap;
     }
     button:hover {
       background: #006600;
       box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
     }
     .status {
-      margin: 10px 0;
-      padding: 10px;
-      border-radius: 4px;
+      margin: 0;
+      padding: 10px 12px;
+      border-radius: 8px;
       font-weight: bold;
+      min-height: 42px;
+      display: flex;
+      align-items: center;
     }
     .status.success {
       background: #004400;
@@ -185,24 +262,18 @@
       background: #222;
       border-left: 3px solid #00ff00;
       padding: 10px;
-      margin: 10px 0;
-      font-size: 14px;
-    }
-    .ascii-art {
-      font-family: monospace;
-      white-space: pre;
-      text-align: center;
-      margin: 20px 0;
-      color: #00aa00;
+      margin: 0;
+      font-size: 13px;
+      border-radius: 0 8px 8px 0;
     }
     .progress-bar {
       width: 100%;
-      height: 20px;
+      height: 14px;
       background: #111;
       border: 1px solid #00ff00;
       border-radius: 10px;
       overflow: hidden;
-      margin: 10px 0;
+      margin: 0;
     }
     .progress-fill {
       height: 100%;
@@ -274,19 +345,17 @@
       }
     }
     .layer-indicator {
-      position: absolute;
-      top: 10px;
-      right: 10px;
+      position: static;
       background: #004400;
       border: 2px solid #00ff00;
       color: #00ff00;
-      padding: 12px 20px;
-      border-radius: 6px;
-      font-size: 18px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 13px;
       font-weight: bold;
-      z-index: 100;
       box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
       transition: all 0.3s ease;
+      white-space: nowrap;
     }
     .layer-indicator.layer-2 {
       background: #440000;
@@ -294,8 +363,8 @@
       color: #ff6666;
       box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
       animation: layer2-pulse 1.5s ease-in-out infinite;
-      font-size: 22px;
-      padding: 15px 25px;
+      font-size: 14px;
+      padding: 8px 14px;
       border-width: 3px;
     }
     .layer-indicator.layer-3 {
@@ -333,11 +402,11 @@
     .layer1-sequence-display {
       background: rgba(68, 0, 0, 0.4);
       border: 2px solid #ff0000;
-      border-radius: 6px;
-      padding: 15px;
-      margin: 15px 0;
+      border-radius: 8px;
+      padding: 10px;
+      margin: 0;
       text-align: center;
-      font-size: 16px;
+      font-size: 14px;
       color: #ff6666;
       box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
       transition: all 0.3s ease;
@@ -349,25 +418,76 @@
       font-weight: bold;
       margin-bottom: 8px;
       color: #ff8888;
-      font-size: 14px;
+      font-size: 13px;
       text-transform: uppercase;
       letter-spacing: 1px;
     }
     .layer1-sequence-display .sequence {
       font-family: "Courier New", monospace;
-      font-size: 18px;
+      font-size: 15px;
       font-weight: bold;
       color: #ff6666;
       letter-spacing: 3px;
       word-spacing: 5px;
     }
+    .success-card {
+      text-align: center;
+    }
+    .success-card h3 {
+      margin-top: 0;
+    }
+    .success-card p:last-of-type {
+      margin-bottom: 18px;
+    }
+    @media (max-width: 980px) {
+      .terminal-layout {
+        grid-template-columns: 1fr;
+      }
+      .sidebar-panel {
+        order: -1;
+      }
+    }
+    @media (max-width: 720px) {
+      body {
+        padding: 8px;
+      }
+      .terminal {
+        padding: 12px;
+        border-radius: 12px;
+      }
+      .shell-topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+      .input-group {
+        flex-direction: column;
+      }
+      button {
+        width: 100%;
+      }
+      .crypto-grid {
+        gap: 3px;
+        padding: 8px;
+      }
+      .crypto-cell {
+        min-height: 34px;
+        font-size: 9px;
+      }
+      .coordinate-label.row {
+        left: -10px;
+      }
+      .coordinate-label.col {
+        top: -12px;
+      }
+      .layer1-sequence-display .sequence {
+        font-size: 14px;
+        letter-spacing: 2px;
+      }
+    }
   </style>
   <body>
     <div class="matrix-bg" id="matrix-bg"></div>
     <div class="matrix-rain" id="matrix-rain"></div>
-
-    <!-- Layer indicator -->
-    <div class="layer-indicator" id="layer-indicator">Layer 1</div>
 
     <!-- Hidden cryptic elements -->
     <div class="cryptic-hint" id="cryptic-hint-1">
@@ -377,83 +497,107 @@
     <!-- HINT 1: The first sequence follows the diagonal path of a bishop's journey -->
 
     <div class="terminal">
-      <div class="header">
-        <h1>🔐 CRYPTO LOCK v2.0 🔐</h1>
-        <p>Multi-layer encryption breach required</p>
+      <div class="shell-topbar">
+        <div class="topbar-copy">
+          <div class="eyebrow">Quantum Security Console</div>
+          <div class="header">
+            <h1>🔐 CRYPTO LOCK v2.0</h1>
+            <p>Decode the matrix, survive the second layer, finish the breach.</p>
+          </div>
+        </div>
+        <div class="layer-indicator" id="layer-indicator">Layer 1</div>
       </div>
 
-      <div class="ascii-art">
-        <pre>
-          ╔══════════════════════════════════════════════════════════════╗
-          ║                  QUANTUM ENCRYPTION MATRIX                   ║
-          ║ ████████████████████████████████████████████████████████████ ║
-          ║ █░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░█ ║
-          ║ █░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░█ ║
-          ║ █░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░█ ║
-          ║ ████████████████████████████████████████████████████████████ ║
-          ╚══════════════════════════════════════════════════════════════╝
-        </pre>
-      </div>
-
-      <div class="hint" id="current-hint">
-        <strong>🔍 INITIAL SCAN:</strong> Coordinates dance in sequence.
-      </div>
-
-      <div class="layer1-sequence-display hidden" id="layer1-sequence-display">
-        <div class="label">Layer 1 Sequence Reference</div>
-        <div class="sequence" id="layer1-sequence-text"></div>
-      </div>
-
-      <div class="crypto-grid" id="crypto-grid"></div>
-
-      <div id="status"></div>
-      
-      <div class="progress-bar">
-        <div class="progress-fill" id="progress-fill"></div>
-      </div>
-
-      <div class="input-section">
-        <div class="input-group">
-          <input
-            type="text"
-            id="layer1"
-            placeholder="Enter the sequence you found..."
-          />
-          <button onclick="checkLayer1()">Check Sequence</button>
+      <div class="terminal-layout">
+        <div class="primary-panel">
+          <div class="panel">
+            <div class="panel-title">
+              <span>Grid Interface</span>
+              <span>8x8 Active Grid</span>
+            </div>
+            <p class="compact-copy">Reveal the right cells in the grid, then submit each layer's answer in the console.</p>
+            <div class="crypto-grid" id="crypto-grid"></div>
+          </div>
         </div>
 
-        <div class="input-group hidden" id="layer2-group">
-          <input
-            type="text"
-            id="layer2"
-            placeholder="Enter the crypto word you found..."
-          />
-          <button onclick="checkLayer2()">Check Crypto Word</button>
-        </div>
+        <div class="sidebar-panel">
+          <div class="panel">
+            <div class="panel-title">
+              <span>Active Hint</span>
+              <span>System Feed</span>
+            </div>
+            <div class="hint" id="current-hint">
+              <strong>🔍 INITIAL SCAN:</strong> Coordinates dance in sequence.
+            </div>
+          </div>
 
-        <div class="input-group hidden" id="layer3-group">
-          <input
-            type="text"
-            id="layer3"
-            placeholder="Enter 'confirm' to finalize..."
-          />
-          <button onclick="checkLayer3()">Finalize Breach</button>
-        </div>
-      </div>
+          <div class="panel">
+            <div class="panel-title">
+              <span>Progress</span>
+              <span>Sequence Tracking</span>
+            </div>
+            <p class="compact-copy">Reveal the correct cells, then submit the matching answer for each layer.</p>
+            <div id="status"></div>
+            <div class="layer1-sequence-display hidden" id="layer1-sequence-display">
+              <div class="label">Layer 1 Sequence Reference</div>
+              <div class="sequence" id="layer1-sequence-text"></div>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" id="progress-fill"></div>
+            </div>
+          </div>
 
-      
-      <div id="reveal" class="hidden">
-        <div class="status success">
-          <h3>🎉 ACCESS GRANTED! 🎉</h3>
-          <p>Segment 3/5: <strong class="seg">CRYPTO</strong></p>
-          <p>You've successfully breached the quantum encryption matrix!</p>
-          <a
-            id="open-vault"
-            href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-            target="_blank"
-          >
-            <button>Open the Git vault</button>
-          </a>
+          <div class="panel">
+            <div class="panel-title">
+              <span>Input Console</span>
+              <span>Layer Commands</span>
+            </div>
+            <div class="input-section">
+              <div class="input-group">
+                <input
+                  type="text"
+                  id="layer1"
+                  placeholder="Enter the sequence you found..."
+                />
+                <button onclick="checkLayer1()">Check Sequence</button>
+              </div>
+
+              <div class="input-group hidden" id="layer2-group">
+                <input
+                  type="text"
+                  id="layer2"
+                  placeholder="Enter the crypto word you found..."
+                />
+                <button onclick="checkLayer2()">Check Crypto Word</button>
+              </div>
+
+              <div class="input-group hidden" id="layer3-group">
+                <input
+                  type="text"
+                  id="layer3"
+                  placeholder="Enter 'confirm' to finalize..."
+                />
+                <button onclick="checkLayer3()">Finalize Breach</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="reveal" class="hidden">
+            <div class="status success success-card">
+              <div>
+                <h3>🎉 ACCESS GRANTED! 🎉</h3>
+                <p>Segment 3/5: <strong class="seg">CRYPTO</strong></p>
+                <p>You've successfully breached the quantum encryption matrix!</p>
+                <a
+                  id="open-vault"
+                  href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                  target="_blank"
+                >
+                  <button>Open the Git vault</button>
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
