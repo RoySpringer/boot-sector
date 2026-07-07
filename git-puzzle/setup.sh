@@ -7,7 +7,7 @@ git init -b main
 # COLD CASE #042: DE VERDWENEN DEVELOPER
 #
 # Doel: achternaam ontvoerder = KRANENBURG (9 letters, moeilijk te raden)
-# Segment voor boot-run = BRANCH (via forensisch-lab tool)
+# Segment voor boot-run = ORIGIN (via p4_forensisch_lab)
 #
 # main = ALLEEN README (1 commit)
 #
@@ -21,7 +21,7 @@ git init -b main
 #   7. B   tag bewijszak-12
 #   8. U   forensisch-lab
 #   9. G   forensisch-lab
-#   → segment-ontcijferaar.html: KRANENBURG → BRANCH
+#   → p4_forensisch_lab: KRANENBURG → ORIGIN
 #
 # Rode haring: P op magazijn (ZAAK #037, naam POLSTRA)
 # ---------------------------------------------------------------
@@ -503,7 +503,7 @@ TXT
 git add register/REGISTER.txt && git commit -qm "verklaringen: status verklaring #113 bijgewerkt"
 
 # -----------------------------
-# 7–9) FORENSISCH LAB → U, G + segment-ontcijferaar
+# 7–9) FORENSISCH LAB → U, G + p4_forensisch_lab
 # -----------------------------
 git switch -qc forensisch-lab main
 mkdir -p analyse tools
@@ -538,8 +538,8 @@ cat > analyse/README.md <<'MD'
 # Forensisch lab — zaak #042
 
 1. Lees `sporen.txt` en `dna-rapport.txt` voor fragment 8/9 en 9/9.
-2. Open `tools/segment-ontcijferaar.html` in je browser
-   (in GitLab: *Open raw* → opslaan → openen, of rechtstreeks in browser).
+2. Open de externe revealer `p4_forensisch_lab` in je browser:
+   https://boot-sector.jump-start.dev/p4_forensisch_lab
 3. Voer de volledige achternaam van de hoofdverdachte in.
 MD
 git add analyse/sporen.txt analyse/dna-rapport.txt analyse/README.md
@@ -599,7 +599,7 @@ Beschrijving: kopieer `docent/MR-beschrijving-042.txt`
 | 8 | U | `forensisch-lab` | Branches |
 | 9 | G | `forensisch-lab` | Branches |
 | → | **KRANENBURG** | alle fragmenten | — |
-| → | **BRANCH** | `segment-ontcijferaar.html` | Tool / browser |
+| → | **ORIGIN** | `p4_forensisch_lab` | Tool / browser |
 
 Rode haring: `magazijn` (P, POLSTRA, zaak #037)
 EOF
@@ -607,7 +607,7 @@ EOF
 echo
 echo "✅ Local repo ready."
 echo "   Achternaam ontvoerder: KRANENBURG (9 fragmenten)"
-echo "   Boot-run segment:      BRANCH (via forensisch-lab tool)"
+echo "   Boot-run segment:      ORIGIN (via p4_forensisch_lab)"
 echo
 echo "Volgende stappen:"
 echo "  1. git remote add origin <YOUR_GITLAB_REPO_URL>"
