@@ -429,7 +429,7 @@ per byte (8-bits).
 
 To repair:
 1. Use 'list' to see corrupted positions
-2. Use 'set <position>=<0|1>' to fix bits
+2. Use 'set <position>=<0|1>' to fix bits e.g. 'set 3=1'
 3. Use 'preview' to see current result
 4. Use 'validate' when done
 5. Use 'reset' to go back to the original corupted data
