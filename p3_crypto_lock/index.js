@@ -482,8 +482,8 @@ function updateHint(hintID) {
     2: "<strong>PATTERN DETECTED: </strong> A pattern is detected.</strong>",
     3: "<strong>‼️ TRANSFORMATION COMPLETE:</strong> System is compromised.",
     4: "<strong>FINAL DECRYPTION:</strong> The crypto word is complete. Enter it to finalize the breach sequence.",
-    5: "<strong>‼️ HIGH ALERT:</strong> The sequence is complete. Going is high alert mode. Limited clicks are activated. Now the grid speaks in transformations. Only A real inspector can solve this.",
-    6: "<strong>🔍 TRANSFORMATIONS NEEDED:</strong> Transformations are needed to solve this layer. Only A real INSPECTor can solve this.",
+    5: "<strong>‼️ HIGH ALERT:</strong> The sequence is complete. Going is high alert mode. Limited clicks are activated. Now the grid speaks in transformations. A good inspector looks beyond the screen and follows the clues the system leaves behind.",
+    6: "<strong>🔍 TRANSFORMATIONS NEEDED:</strong> Transformations are needed to solve this layer. Inspectors do not only read the interface, they also check the messages the application logs behind the scenes.",
   };
 
   if (hints[hintID]) {
