@@ -1,0 +1,19 @@
+## Zaak #042 — teruggave badge R. de Vries
+
+HR heeft een aanvraag klaargezet op branch `teruggave-badge`.
+
+### Context
+Badge tijdelijk geblokkeerd na vermissing. Recherche moet bevestigen
+dat zaak #042 voldoende is afgehandeld voordat retour kan.
+
+### Fragment uit ingetrokken verklaring #113
+De getuige trok de verklaring in. Eén teken overleefde de intrekking:
+
+**N** (fragment 6/9)
+
+### Vervolg
+De rest van de verklaring verwees naar bewijszak **12** in het
+verzegelingsregister en daarna naar **forensisch-lab**.
+
+---
+*Niet mergen — escape-room prop.*

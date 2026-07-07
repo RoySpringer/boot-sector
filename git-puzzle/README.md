@@ -1,0 +1,1 @@
+This is a git puzzel. With this script you van create a git puzzle. Running this script creates a git project with a complete history for people to navigate. You can deploy this to gitlab or github.
