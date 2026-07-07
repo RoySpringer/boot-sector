@@ -18,7 +18,7 @@ De 5 segmenten (in volgorde):
 1. **Boot-Sector**
 2. **Console Gate**
 3. **Crypto Lock**
-4. **Branch Adventure**
+4. **Forensisch Lab**
 5. **Unknown**
 
 LET OP: _Segment 5 laat zich niet vinden waar je hem verwacht. Wie alleen vooruit kijkt, mist wat eerder al verborgen lag._
@@ -28,9 +28,9 @@ LET OP: _Segment 5 laat zich niet vinden waar je hem verwacht. Wie alleen voorui
 ## 📚 Praktisch
 
 - Werk samen in je team en verdeel de rollen slim.
-- Elke puzzel levert een link en een segment op. Deel beide met je team voordat je doorgaat.
+- Elke puzzel levert een link, hint of segment op. Deel alles met je team voordat je doorgaat.
 - Noteer alle website-URL's, zodat je makkelijk terug kunt als je een puzzel opnieuw moet bekijken.
-- Inspecteer waar nodig de broncode, de console of verborgen tekst: niet alle hints zijn direct zichtbaar.
+- **Inspecteer** waar nodig de broncode, de `console`, GitLab of verborgen tekst: niet alle hints zijn direct zichtbaar.
 - Hebben jullie alle 5 de segmenten gevonden? Vul ze in het mainframe in om de **3-cijferige code** te krijgen en het slot van de goodiebag te openen. 🎁
 
 ---
@@ -39,9 +39,9 @@ LET OP: _Segment 5 laat zich niet vinden waar je hem verwacht. Wie alleen voorui
 
 1. **Boot-Sector** – herstel corrupte bits en bytes met terminal-commando’s.
 2. **Console Gate** – fix kleine bugs in code; teamwork vereist.
-3. **Crypto Lock** – los het grid en encryptie-laag op.
-4. **Branch Adventure** – speur door GitLab (branches, tags, history) om het segment te vinden.
-5. **Code Validation** – Ga me alle segmenten naar de de mainframe (computer vooraan de klas) om een code te genereren.
+3. **Crypto Lock** – los het grid en de encryptie-laag op om toegang tot het lab te krijgen.
+4. **Forensisch Lab** – onderzoek het dossier, open GitLab en achterhaal de achternaam van de ontvoerder om het segment vrij te geven.
+5. **Code Validation** – voer alle segmenten in op de mainframe-computer vooraan in de klas om een code te genereren.
 
 Heb je de code? Test het op het slotje alleen de juiste code unlock de goodiebag!
 
@@ -50,7 +50,7 @@ Heb je de code? Test het op het slotje alleen de juiste code unlock de goodiebag
 ## 🌐 Start hier
 
 👉 Begin bij de **Boot-Sector Terminal**:  
-https://boot-sector.jump-start.dev/
+[https://boot-sector.jump-start.dev/](https://boot-sector.jump-start.dev/)
 
 Daarna leiden de puzzels zichzelf verder.
 
