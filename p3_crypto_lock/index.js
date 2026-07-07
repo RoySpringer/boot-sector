@@ -1,7 +1,7 @@
 const CONFIG = {
   segmentReveal: "RlVUVVJF",
   NEXT_URL:
-    "aHR0cHM6Ly9naXRsYWIuY29tL3Iuc3ByaW5nZXIudGlqZGVsaWprL2JyYW5jaC1leHBsb3Jlci8tL3RyZWUvbWFpbi8=",
+    "aHR0cHM6Ly9ib290LXNlY3Rvci5qdW1wLXN0YXJ0LmRldi9wNF9mb3JlbnNpc2NoX2xhYg==",
 };
 
 // Matrix background effect
