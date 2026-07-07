@@ -154,6 +154,33 @@
         margin-top: 4px;
       }
 
+      .lab-links .dossier-link {
+        background: linear-gradient(135deg, #1f6f80, #2f92a8 55%, #78cde2);
+        color: #ffffff;
+        border: 1px solid #1f6f80;
+        box-shadow: 0 14px 28px rgba(47, 146, 168, 0.28);
+        position: relative;
+      }
+
+      .lab-links .dossier-link::before {
+        content: "Belangrijk";
+        position: absolute;
+        top: -10px;
+        right: 12px;
+        padding: 3px 8px;
+        border-radius: 999px;
+        background: #18343c;
+        color: #ffffff;
+        font-size: 10px;
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        box-shadow: 0 8px 16px rgba(24, 52, 60, 0.18);
+      }
+
+      .lab-links .dossier-link:hover {
+        box-shadow: 0 18px 32px rgba(47, 146, 168, 0.38);
+      }
+
       label {
         font-size: 13px;
         color: var(--muted);
@@ -335,7 +362,7 @@
           </p>
           <div class="lab-links">
             <a
-              class="next-link"
+              class="next-link dossier-link"
               href="https://gitlab.com/r.springer.tijdelijk/branch-explorerv2"
               target="_blank"
               rel="noopener"
