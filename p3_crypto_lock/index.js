@@ -226,7 +226,7 @@ class CryptoGrid {
           // Check if max wrong clicks reached
           if (layer2ClickCount > MAX_LAYER2_CLICKS) {
             showStatus(
-              `Maximum wrong clicks (${MAX_LAYER2_CLICKS}) reached! Refreshing page...`,
+              `Too many wrong clicks (${MAX_LAYER2_CLICKS}). The page will reload...`,
               "error"
             );
             setTimeout(() => {
@@ -248,7 +248,7 @@ class CryptoGrid {
           }
           
           showStatus(
-            `Layer 2: ${remainingClicks} wrong clicks remaining`,
+            `Layer 2: ${remainingClicks} wrong clicks left`,
             statusType
           );
           if (remainingClicks < MAX_LAYER2_CLICKS / 2) {
@@ -416,7 +416,7 @@ function switchToCryptoGrid() {
   initCryptoGrid("layer2");
   updateLayerIndicator(2);
   showStatus(
-    "Crypto grid loaded! Find the hidden word using the transformation hints. You have 8 wrong clicks remaining.",
+    "Layer 2 is open. Find the hidden word. You have 8 wrong clicks.",
     "success"
   );
   document.getElementById("layer2-group").classList.remove("hidden");
@@ -478,12 +478,12 @@ function updateProgress() {
 function updateHint(hintID) {
   const hintElement = document.getElementById("current-hint");
   const hints = {
-    1: "<strong>🔍 INITIAL SCAN:</strong> Coordinates dance in sequence. Only the ones that make progress are the One",
-    2: "<strong>PATTERN DETECTED: </strong> A pattern is detected.</strong>",
-    3: "<strong>‼️ TRANSFORMATION COMPLETE:</strong> System is compromised.",
-    4: "<strong>FINAL DECRYPTION:</strong> The crypto word is complete. Enter it to finalize the breach sequence.",
-    5: "<strong>‼️ HIGH ALERT:</strong> The sequence is complete. Going is high alert mode. Limited clicks are activated. Now the grid speaks in transformations. A good inspector looks beyond the screen and follows the clues the system leaves behind.",
-    6: "<strong>🔍 TRANSFORMATIONS NEEDED:</strong> Transformations are needed to solve this layer. Inspectors do not only read the interface, they also check the messages the application logs behind the scenes.",
+    1: "<strong>🔍 START:</strong> Open cells in the grid. Keep only the cells that follow a simple order. Close the rest.",
+    2: "<strong>PATTERN FOUND:</strong> You found a pattern. Type that order below to continue.",
+    3: "<strong>DONE:</strong> This layer is finished.",
+    4: "<strong>WORD FOUND:</strong> You found the hidden word. Type it below.",
+    5: "<strong>‼️ LAYER 2:</strong> You now have a limited number of wrong clicks. The cells changed. Not all hints are on this page. Also look in the console (F12).",
+    6: "<strong>🔍 NEED HELP:</strong> Change the numbers from layer 1. Open the console (F12) and type help().",
   };
 
   if (hints[hintID]) {
@@ -499,25 +499,16 @@ function updateHint(hintID) {
 
 function checkLayer1() {
   const input = document.getElementById("layer1").value.trim().toUpperCase();
+  const typedOrder = input.replace(/,/g, "").replace(/ /g, "");
+  const expectedOrder = "A1B2C3D4E5F6G7H8";
 
-  // Check if the sequential pattern is found using the grid class
-  if (
-    layer1Grid &&
-    layer1Grid.isSequenceFound() &&
-    input.replace(/,/g, "").replace(/ /g, "") === "A1B2C3D4E5F6G7H8"
-  ) {
-    showStatus(
-      "Sequential pattern discovered! Switching to crypto grid...",
-      "success"
-    );
+  if (typedOrder === expectedOrder) {
+    showStatus("Correct! Opening layer 2...", "success");
 
     // Switch to the crypto grid
     setTimeout(() => {
       switchToCryptoGrid();
-      showStatus(
-        "Crypto grid loaded! Second encryption layer activated.",
-        "success"
-      );
+      showStatus("Layer 2 is now active.", "success");
       document.getElementById("layer2-group").classList.remove("hidden");
       updateHint(5);
       const progressFill = document.getElementById("progress-fill");
@@ -534,30 +525,31 @@ function checkLayer1() {
       }, 100);
     }, 2000);
   } else {
-    showStatus("Incorrect sqeuence. Try again.", "error");
+    showStatus(
+      "That is not the right order. Try again, like A1 B2 C3...",
+      "error"
+    );
   }
 }
 
 function checkLayer2() {
   const input = document.getElementById("layer2").value.trim().toLowerCase();
 
-  // Check if the crypto word is found using the grid class
   if (layer2Grid && layer2Grid.isSequenceFound()) {
-    // The expected answer is the letters from the crypto word: "cryptolk"
+    // The expected answer is the letters from the hidden word: "cryptolk"
     const expected = "cryptolk";
 
     if (input === expected) {
-      showStatus(
-        "Crypto word discovered! You've successfully breached the system!",
-        "success"
-      );
+      showStatus("Correct! Type confirm to finish.", "success");
       updateLayerIndicator(3);
       document.getElementById("layer3-group").classList.remove("hidden");
+    } else if (/\d/.test(input)) {
+      showStatus("Do not use numbers. Take them out.", "error");
     } else {
-      showStatus("Incorrect. Try again.", "error");
+      showStatus("That word is not right. Try again.", "error");
     }
   } else {
-    showStatus("Incorrect. Try again.", "error");
+    showStatus("Open the right cells in the grid first.", "error");
   }
 }
 
@@ -568,12 +560,12 @@ function checkLayer3() {
   const expected = "confirm";
 
   if (input === expected) {
-    showStatus("🎉 All layers breached! Access granted!", "success");
+    showStatus("🎉 All layers done! Access granted!", "success");
     document.getElementById("reveal").classList.remove("hidden");
     document.getElementById("open-vault").href = atob(CONFIG.NEXT_URL);
     document.querySelector(".seg").textContent = atob(CONFIG.segmentReveal);
   } else {
-    throw new Error("Confirmation word is is not matching `confirm`.");
+    throw new Error("Type the word confirm.");
   }
 }
 
@@ -615,38 +607,39 @@ document.addEventListener("DOMContentLoaded", () => {
     "color: #00ff00; font-size: 20px; font-weight: bold;"
   );
   console.log(
-    "%cType 'help()' in console for cryptic assistance",
+    "%cType help() here for extra help",
     "color: #00aa00; font-size: 14px;"
   );
 
   // Add global help function for console hints
   window.help = function () {
     console.log(
-      "%c=== CRYPTIC ASSISTANCE ===",
+      "%c=== EXTRA HELP ===",
       "color: #00ff00; font-weight: bold;"
     );
     console.log(
-      "%c1. Layer 1: Which numbers make the progression?",
+      "%c1. Layer 1: Find cells that go up in order, like A1 then B2.",
       "color: #00aa00;"
     );
     console.log(
-      "%c2. Layer 2: Mathematical transformations for the sequence to reveal new coordinates",
+      "%c2. Layer 2: Change the numbers of that list with + and -.",
       "color: #ff0000;"
     );
-    console.log("%c3. Layer 2: Look for the hidden word", "color: #ff0000;");
     console.log(
-      "%cType 'hint(1)', 'hint(2)', or 'hint(3)' for specific guidance",
+      "%c3. Layer 2: The open cells hide a word. Remove the numbers.",
+      "color: #ff0000;"
+    );
+    console.log(
+      "%cType hint(1), hint(2) or hint(3) for more help",
       "color: #00aa00;"
     );
   };
 
   window.hint = function (id) {
-    if (id === 3) throw new Error("numbers are not allowed. remove them.");
+    if (id === 3) throw new Error("Do not use numbers. Take them out.");
     const hints = {
-      1: "Find each number in the sequence by clicking on the grid. Leave only the numbers that make progress.",
-      2: `Transform coordinates: ${window.transformationHints.map(
-        (hint) => `${hint}`
-      )}`,
+      1: "Click cells in the grid. Keep only the ones that go in order, like A1, B2, C3. Close the other cells.",
+      2: `Change the numbers of the layer 1 cells: ${window.transformationHints.join(", ")}`,
     };
     console.log("%c" + hints[id], "color: #ffaa00; font-weight: bold;");
   };
@@ -684,12 +677,12 @@ function showCrypticHint() {
   const currentLayer = getCurrentLayer();
   if (currentLayer != 1) return;
   const crypticHints = {
-    1: "The grid whispers: 'A.B..C...D....E.....F......G.......H........'",
+    1: "Look at the letters in order: A, then B, then C... and match them with numbers that also go up.",
   };
 
   const hintElement = document.getElementById("current-hint");
   hintElement.innerHTML =
-    "<strong>🔍 CRYPTIC WHISPER:</strong> " + crypticHints[currentLayer];
+    "<strong>🔍 HIDDEN HINT:</strong> " + crypticHints[currentLayer];
 
   // Auto-hide after 5 seconds
   setTimeout(() => {
@@ -722,7 +715,7 @@ function toggleDebugMode() {
     }
   });
   console.log(
-    "%cDebug mode toggled - target cells highlighted",
+    "%cDebug mode on or off - target cells are marked in red",
     "color: #ff0000; font-weight: bold;"
   );
 }
@@ -733,35 +726,35 @@ function toggleMatrixRain() {
   if (rain.style.display === "none") {
     rain.style.display = "block";
     console.log(
-      "%cMatrix rain enabled - look for hidden messages",
+      "%cMatrix rain is on - look for hidden messages",
       "color: #00ff00; font-weight: bold;"
     );
   } else {
     rain.style.display = "none";
-    console.log("%cMatrix rain disabled", "color: #ff0000; font-weight: bold;");
+    console.log("%cMatrix rain is off", "color: #ff0000; font-weight: bold;");
   }
 }
 
 // Function to reveal all hints (secret combination)
 function revealAllHints() {
   console.log(
-    "%c=== ALL HINTS REVEALED ===",
+    "%c=== ALL HINTS ===",
     "color: #ff0000; font-size: 16px; font-weight: bold;"
   );
   console.log(
-    "%cLayer 1: Click A1, B2, C3, D4, E5, F6, G7, H8 in sequence",
+    "%cLayer 1: Click A1, B2, C3, D4, E5, F6, G7, H8",
     "color: #ffaa00; font-weight: bold;"
   );
   console.log(
-    "%cLayer 2: Transform coordinates and click: A3, C2, G2, B5, E8, F4, H8, D1",
+    "%cLayer 2: Change the numbers and click: A3, C2, G2, B5, E8, F4, H8, D1",
     "color: #ffaa00; font-weight: bold;"
   );
   console.log(
-    "%cLayer 3: The crypto word is 'cryptolk'",
+    "%cLayer 2 word: cryptolk",
     "color: #ffaa00; font-weight: bold;"
   );
   console.log(
-    "%cFinal: Enter 'confirm' to complete",
+    "%cLast step: type confirm",
     "color: #ffaa00; font-weight: bold;"
   );
 

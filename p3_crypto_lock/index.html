@@ -489,20 +489,20 @@
     <div class="matrix-bg" id="matrix-bg"></div>
     <div class="matrix-rain" id="matrix-rain"></div>
 
-    <!-- Hidden cryptic elements -->
+    <!-- Hidden hint -->
     <div class="cryptic-hint" id="cryptic-hint-1">
-      <strong>🔍 SECRET WHISPER:</strong><br />
-      The first sequence follows the path of a bishop's journey
+      <strong>🔍 HIDDEN HINT:</strong><br />
+      The first path is a diagonal line: start at A1, then B2, then C3, and so on.
     </div>
-    <!-- HINT 1: The first sequence follows the diagonal path of a bishop's journey -->
+    <!-- HINT 1: The first path is a diagonal line: A1, then B2, then C3, and so on. -->
 
     <div class="terminal">
       <div class="shell-topbar">
         <div class="topbar-copy">
-          <div class="eyebrow">Quantum Security Console</div>
+          <div class="eyebrow">Security Console</div>
           <div class="header">
             <h1>🔐 CRYPTO LOCK v2.0</h1>
-            <p>Decode the matrix, survive the second layer, finish the breach.</p>
+            <p>Open the right cells. Then type the answer for each layer.</p>
           </div>
         </div>
         <div class="layer-indicator" id="layer-indicator">Layer 1</div>
@@ -512,10 +512,10 @@
         <div class="primary-panel">
           <div class="panel">
             <div class="panel-title">
-              <span>Grid Interface</span>
-              <span>8x8 Active Grid</span>
+              <span>Grid</span>
+              <span>8 x 8</span>
             </div>
-            <p class="compact-copy">Reveal the right cells in the grid, then submit each layer's answer in the console.</p>
+            <p class="compact-copy">Click a cell to open it. Click again to close it. Find the right cells, then type your answer.</p>
             <div class="crypto-grid" id="crypto-grid"></div>
           </div>
         </div>
@@ -523,23 +523,23 @@
         <div class="sidebar-panel">
           <div class="panel">
             <div class="panel-title">
-              <span>Active Hint</span>
-              <span>System Feed</span>
+              <span>Hint</span>
+              <span>Help</span>
             </div>
             <div class="hint" id="current-hint">
-              <strong>🔍 INITIAL SCAN:</strong> Coordinates dance in sequence.
+              <strong>🔍 START:</strong> Open cells in the grid. Keep only the cells that follow a simple order.
             </div>
           </div>
 
           <div class="panel">
             <div class="panel-title">
               <span>Progress</span>
-              <span>Sequence Tracking</span>
+              <span>Layer 1</span>
             </div>
-            <p class="compact-copy">Reveal the correct cells, then submit the matching answer for each layer.</p>
+            <p class="compact-copy">Use the grid to find the order. If you already know it, type it below.</p>
             <div id="status"></div>
             <div class="layer1-sequence-display hidden" id="layer1-sequence-display">
-              <div class="label">Layer 1 Sequence Reference</div>
+              <div class="label">Your layer 1 answer</div>
               <div class="sequence" id="layer1-sequence-text"></div>
             </div>
             <div class="progress-bar">
@@ -549,35 +549,35 @@
 
           <div class="panel">
             <div class="panel-title">
-              <span>Input Console</span>
-              <span>Layer Commands</span>
+              <span>Your answer</span>
+              <span>Layer 1</span>
             </div>
             <div class="input-section">
               <div class="input-group">
                 <input
                   type="text"
                   id="layer1"
-                  placeholder="Enter the sequence you found..."
+                  placeholder="Type the cells you found, for example A1 B2..."
                 />
-                <button onclick="checkLayer1()">Check Sequence</button>
+                <button onclick="checkLayer1()">Check</button>
               </div>
 
               <div class="input-group hidden" id="layer2-group">
                 <input
                   type="text"
                   id="layer2"
-                  placeholder="Enter the crypto word you found..."
+                  placeholder="Type the hidden word (letters only)..."
                 />
-                <button onclick="checkLayer2()">Check Crypto Word</button>
+                <button onclick="checkLayer2()">Check</button>
               </div>
 
               <div class="input-group hidden" id="layer3-group">
                 <input
                   type="text"
                   id="layer3"
-                  placeholder="Enter 'confirm' to finalize..."
+                  placeholder="Type confirm to finish..."
                 />
-                <button onclick="checkLayer3()">Finalize Breach</button>
+                <button onclick="checkLayer3()">Finish</button>
               </div>
             </div>
           </div>
@@ -587,13 +587,13 @@
               <div>
                 <h3>🎉 ACCESS GRANTED! 🎉</h3>
                 <p>Segment 3/5: <strong class="seg">CRYPTO</strong></p>
-                <p>You've successfully breached the quantum encryption matrix!</p>
+                <p>You opened the lock. Well done!</p>
                 <a
                   id="open-vault"
                   href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
                   target="_blank"
                 >
-                  <button>Open the Git vault</button>
+                  <button>Open the next room</button>
                 </a>
               </div>
             </div>
@@ -602,7 +602,7 @@
       </div>
     </div>
 
-    <!-- TOP SECRECT -->
+    <!-- TOP SECRET -->
     <!-- SEGMENT 5/5: De stad waarin je nu bent -->
     <script src="index.js"></script>
   </body>
