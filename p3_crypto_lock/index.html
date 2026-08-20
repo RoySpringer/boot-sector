@@ -16,24 +16,58 @@
       line-height: 1.4;
       min-height: 100vh;
     }
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+    .page-header {
+      margin-bottom: 14px;
+    }
+    .eyebrow {
+      color: #66ff99;
+      font-size: 11px;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: clamp(24px, 2.5vw, 34px);
+      line-height: 1.1;
+    }
+    .header p {
+      margin: 4px 0 0;
+      color: #8afcae;
+      font-size: 13px;
+    }
+    .accordion {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
     .terminal {
       background: #000;
       border: 2px solid #00ff00;
       border-radius: 16px;
-      padding: 16px;
-      max-width: 1180px;
-      margin: 0 auto;
       box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
       position: relative;
       overflow: hidden;
+      transition: border-color 0.3s, box-shadow 0.3s, opacity 0.3s, transform 0.3s;
     }
-    .terminal.red {
+    .terminal.theme-red {
       border-color: #ff0000;
-      box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+      box-shadow: 0 0 20px rgba(255, 0, 0, 0.35);
       animation: red-glow 2s ease-in-out infinite;
-      transition: all 0.2s;
     }
-
+    .terminal.locked {
+      opacity: 0.55;
+    }
+    .terminal.complete:not(.open) {
+      animation: none;
+      box-shadow: 0 0 12px rgba(0, 255, 0, 0.2);
+    }
+    .terminal.theme-red.complete:not(.open) {
+      box-shadow: 0 0 12px rgba(255, 0, 0, 0.25);
+    }
     @keyframes red-glow {
       0% {
         box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
@@ -45,40 +79,113 @@
         box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
       }
     }
-    .shell-topbar {
+    .accordion-header {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding-bottom: 10px;
-      margin-bottom: 14px;
-      border-bottom: 1px solid rgba(0, 255, 0, 0.25);
+      gap: 10px;
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      color: #00ff00;
+      text-align: left;
+      padding: 14px 16px;
+      white-space: normal;
+      box-shadow: none;
     }
-    .topbar-copy {
+    .accordion-header:hover {
+      background: rgba(0, 255, 0, 0.08);
+      box-shadow: none;
+    }
+    .terminal.locked .accordion-header,
+    .terminal.locked .accordion-header:hover {
+      cursor: not-allowed;
+      background: transparent;
+      box-shadow: none;
+    }
+    .terminal.theme-red .accordion-header {
+      color: #ff8888;
+    }
+    .terminal.theme-red .accordion-header:hover {
+      background: rgba(255, 0, 0, 0.1);
+      box-shadow: none;
+    }
+    .accordion-badge {
+      width: 28px;
+      height: 28px;
+      flex-shrink: 0;
+      border: 1px solid #00ff00;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: bold;
+    }
+    .terminal.complete .accordion-badge {
+      background: #004400;
+    }
+    .terminal.theme-red .accordion-badge {
+      border-color: #ff6666;
+    }
+    .terminal.theme-red.complete .accordion-badge {
+      background: #440000;
+    }
+    .accordion-copy {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 2px;
       min-width: 0;
+      flex: 1;
     }
-    .eyebrow {
-      color: #66ff99;
-      font-size: 11px;
-      letter-spacing: 1.4px;
-      text-transform: uppercase;
+    .accordion-copy strong {
+      font-size: 15px;
     }
-    .header {
-      text-align: left;
-      margin: 0;
-    }
-    .header h1 {
-      margin: 0;
-      font-size: clamp(24px, 2.5vw, 34px);
-      line-height: 1.1;
-    }
-    .header p {
-      margin: 4px 0 0;
+    .accordion-copy small {
       color: #8afcae;
-      font-size: 13px;
+      font-size: 12px;
+    }
+    .terminal.theme-red .accordion-copy small {
+      color: #ffaaaa;
+    }
+    .terminal.locked .unlocked-copy,
+    .terminal:not(.locked) .locked-copy,
+    .terminal.complete .open-copy,
+    .terminal:not(.complete) .complete-copy {
+      display: none;
+    }
+    .accordion-order {
+      display: none;
+      font-size: 11px;
+      font-weight: bold;
+      letter-spacing: 1px;
+      color: #8afcae;
+      text-align: right;
+      line-height: 1.4;
+      max-width: 46%;
+    }
+    .terminal.complete .accordion-order.has-value {
+      display: block;
+    }
+    .accordion-chevron {
+      color: #8afcae;
+      transition: transform 0.2s;
+    }
+    .terminal.open .accordion-chevron {
+      transform: rotate(180deg);
+    }
+    .terminal.locked .accordion-chevron {
+      visibility: hidden;
+    }
+    .accordion-body {
+      display: none;
+      padding: 0 16px 16px;
+    }
+    .terminal.open .accordion-body {
+      display: block;
+    }
+    .layer-banner {
+      margin-bottom: 12px;
     }
     .terminal-layout {
       display: grid;
@@ -100,6 +207,10 @@
     }
     .panel:last-child {
       margin-bottom: 0;
+    }
+    .terminal.theme-red .panel {
+      background: rgba(255, 0, 0, 0.06);
+      border-color: rgba(255, 0, 0, 0.28);
     }
     .panel-title {
       display: flex;
@@ -123,7 +234,7 @@
       gap: 4px;
       margin: 0;
       background: #111;
-      padding: 10px;
+      padding: 18px 10px 10px 22px;
       border-radius: 10px;
       max-width: 100%;
       position: relative;
@@ -171,14 +282,6 @@
       border-color: #00ff00;
       color: #fff;
     }
-    .crypto-cell.revealed.layer2 {
-      background: #440000;
-      border-color: #ff0000;
-      color: #fff;
-    }
-    .input-section {
-      margin: 0;
-    }
     .input-group {
       display: flex;
       gap: 8px;
@@ -199,6 +302,10 @@
       border-color: #00aa00;
       box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
     }
+    .terminal.theme-red input[type="text"] {
+      border-color: #ff6666;
+      color: #ff8888;
+    }
     button {
       background: #004400;
       color: #00ff00;
@@ -215,13 +322,19 @@
       box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
     }
     .status {
-      margin: 0;
+      margin: 8px 0 0;
       padding: 10px 12px;
       border-radius: 8px;
       font-weight: bold;
       min-height: 42px;
       display: flex;
       align-items: center;
+    }
+    .status:empty {
+      display: none;
+      min-height: 0;
+      padding: 0;
+      margin: 0;
     }
     .status.success {
       background: #004400;
@@ -249,7 +362,8 @@
       animation: critical-pulse 1s ease-in-out infinite;
     }
     @keyframes critical-pulse {
-      0%, 100% {
+      0%,
+      100% {
         box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
         opacity: 1;
       }
@@ -266,6 +380,23 @@
       font-size: 13px;
       border-radius: 0 8px 8px 0;
     }
+    .hint.high-alert {
+      animation: high-alert-pulse 1.5s ease-in-out infinite;
+      border-left-width: 5px;
+      border-left-color: #ff0000;
+      background: rgba(68, 0, 0, 0.3);
+    }
+    @keyframes high-alert-pulse {
+      0%,
+      100% {
+        opacity: 1;
+        box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+      }
+      50% {
+        opacity: 0.8;
+        box-shadow: 0 0 20px rgba(255, 0, 0, 1);
+      }
+    }
     .progress-bar {
       width: 100%;
       height: 14px;
@@ -273,7 +404,7 @@
       border: 1px solid #00ff00;
       border-radius: 10px;
       overflow: hidden;
-      margin: 0;
+      margin: 8px 0 0;
     }
     .progress-fill {
       height: 100%;
@@ -308,16 +439,7 @@
       cursor: help;
       border-bottom: 1px dotted #00ff00;
     }
-    .matrix-rain {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: -2;
-      opacity: 0.05;
-    }
+    .matrix-rain,
     .matrix-bg {
       position: fixed;
       top: 0;
@@ -325,6 +447,12 @@
       width: 100%;
       height: 100%;
       pointer-events: none;
+    }
+    .matrix-rain {
+      z-index: -2;
+      opacity: 0.05;
+    }
+    .matrix-bg {
       z-index: -1;
       opacity: 0.1;
     }
@@ -344,61 +472,6 @@
         opacity: 0;
       }
     }
-    .layer-indicator {
-      position: static;
-      background: #004400;
-      border: 2px solid #00ff00;
-      color: #00ff00;
-      padding: 8px 14px;
-      border-radius: 999px;
-      font-size: 13px;
-      font-weight: bold;
-      box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
-      transition: all 0.3s ease;
-      white-space: nowrap;
-    }
-    .layer-indicator.layer-2 {
-      background: #440000;
-      border-color: #ff0000;
-      color: #ff6666;
-      box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
-      animation: layer2-pulse 1.5s ease-in-out infinite;
-      font-size: 14px;
-      padding: 8px 14px;
-      border-width: 3px;
-    }
-    .layer-indicator.layer-3 {
-      background: #444400;
-      border-color: #ffff00;
-      color: #ffff66;
-      box-shadow: 0 0 20px rgba(255, 255, 0, 0.8);
-    }
-    @keyframes layer2-pulse {
-      0%, 100% {
-        transform: scale(1);
-        box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
-      }
-      50% {
-        transform: scale(1.1);
-        box-shadow: 0 0 30px rgba(255, 0, 0, 1);
-      }
-    }
-    .hint.high-alert {
-      animation: high-alert-pulse 1.5s ease-in-out infinite;
-      border-left-width: 5px;
-      border-left-color: #ff0000;
-      background: rgba(68, 0, 0, 0.3);
-    }
-    @keyframes high-alert-pulse {
-      0%, 100% {
-        opacity: 1;
-        box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
-      }
-      50% {
-        opacity: 0.8;
-        box-shadow: 0 0 20px rgba(255, 0, 0, 1);
-      }
-    }
     .layer1-sequence-display {
       background: rgba(68, 0, 0, 0.4);
       border: 2px solid #ff0000;
@@ -409,7 +482,6 @@
       font-size: 14px;
       color: #ff6666;
       box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
-      transition: all 0.3s ease;
     }
     .layer1-sequence-display.hidden {
       display: none;
@@ -432,6 +504,7 @@
     }
     .success-card {
       text-align: center;
+      margin-top: 12px;
     }
     .success-card h3 {
       margin-top: 0;
@@ -452,12 +525,7 @@
         padding: 8px;
       }
       .terminal {
-        padding: 12px;
         border-radius: 12px;
-      }
-      .shell-topbar {
-        align-items: flex-start;
-        flex-direction: column;
       }
       .input-group {
         flex-direction: column;
@@ -467,7 +535,7 @@
       }
       .crypto-grid {
         gap: 3px;
-        padding: 8px;
+        padding: 16px 8px 8px 18px;
       }
       .crypto-cell {
         min-height: 34px;
@@ -483,122 +551,173 @@
         font-size: 14px;
         letter-spacing: 2px;
       }
+      .accordion-header {
+        flex-wrap: wrap;
+      }
+      .accordion-order {
+        max-width: 100%;
+        flex-basis: 100%;
+        text-align: left;
+      }
     }
   </style>
   <body>
     <div class="matrix-bg" id="matrix-bg"></div>
     <div class="matrix-rain" id="matrix-rain"></div>
 
-    <!-- Hidden hint -->
     <div class="cryptic-hint" id="cryptic-hint-1">
       <strong>🔍 HIDDEN HINT:</strong><br />
       The first path is a diagonal line: start at A1, then B2, then C3, and so on.
     </div>
     <!-- HINT 1: The first path is a diagonal line: A1, then B2, then C3, and so on. -->
 
-    <div class="terminal">
-      <div class="shell-topbar">
-        <div class="topbar-copy">
-          <div class="eyebrow">Security Console</div>
-          <div class="header">
-            <h1>🔐 CRYPTO LOCK v2.0</h1>
-            <p>Open the right cells. Then type the answer for each layer.</p>
-          </div>
+    <div class="page">
+      <div class="page-header">
+        <div class="eyebrow">Security Console</div>
+        <div class="header">
+          <h1>🔐 CRYPTO LOCK v2.0</h1>
+          <p>There are 2 layers. Finish layer 1, then use what you found in layer 2.</p>
         </div>
-        <div class="layer-indicator" id="layer-indicator">Layer 1</div>
       </div>
 
-      <div class="terminal-layout">
-        <div class="primary-panel">
-          <div class="panel">
-            <div class="panel-title">
-              <span>Grid</span>
-              <span>8 x 8</span>
+      <div class="accordion" id="layer-accordion">
+        <section class="terminal accordion-item open unlocked" id="layer1-item">
+          <button
+            class="accordion-header"
+            type="button"
+            aria-expanded="true"
+            aria-controls="layer1-body"
+          >
+            <span class="accordion-badge" id="layer1-badge">1</span>
+            <span class="accordion-copy">
+              <strong>Layer 1 terminal</strong>
+              <small class="open-copy">Find the order</small>
+              <small class="complete-copy">Done — use this order in layer 2</small>
+            </span>
+            <span class="accordion-order" id="layer1-header-order"></span>
+            <span class="accordion-chevron">▾</span>
+          </button>
+          <div class="accordion-body" id="layer1-body">
+            <div class="terminal-layout">
+              <div class="primary-panel">
+                <div class="panel">
+                  <div class="panel-title">
+                    <span>Grid</span>
+                    <span>8 x 8</span>
+                  </div>
+                  <p class="compact-copy">
+                    Click a cell to open it. Click again to close it. Find the
+                    right order, then type it.
+                  </p>
+                  <div class="crypto-grid" id="layer1-grid"></div>
+                </div>
+              </div>
+              <div class="sidebar-panel">
+                <div class="panel">
+                  <div class="panel-title">
+                    <span>Hint</span>
+                    <span>Layer 1</span>
+                  </div>
+                  <div class="hint" id="current-hint">
+                    <strong>🔍 START:</strong> Open cells in the grid. Keep only
+                    the cells that follow a simple order.
+                  </div>
+                  <div id="status" class="status layer-status"></div>
+                  <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                  </div>
+                  <div class="input-group">
+                    <input
+                      type="text"
+                      id="layer1"
+                      placeholder="Type the cells you found..."
+                    />
+                    <button type="button" onclick="checkLayer1()">Check</button>
+                  </div>
+                </div>
+              </div>
             </div>
-            <p class="compact-copy">Click a cell to open it. Click again to close it. Find the right cells, then type your answer.</p>
-            <div class="crypto-grid" id="crypto-grid"></div>
           </div>
-        </div>
+        </section>
 
-        <div class="sidebar-panel">
-          <div class="panel">
-            <div class="panel-title">
-              <span>Hint</span>
-              <span>Help</span>
-            </div>
-            <div class="hint" id="current-hint">
-              <strong>🔍 START:</strong> Open cells in the grid. Keep only the cells that follow a simple order.
-            </div>
-          </div>
-
-          <div class="panel">
-            <div class="panel-title">
-              <span>Progress</span>
-              <span>Layer 1</span>
-            </div>
-            <p class="compact-copy">Use the grid to find the order. If you already know it, type it below.</p>
-            <div id="status"></div>
-            <div class="layer1-sequence-display hidden" id="layer1-sequence-display">
-              <div class="label">Your layer 1 answer</div>
+        <section class="terminal accordion-item locked" id="layer2-item">
+          <button
+            class="accordion-header"
+            type="button"
+            aria-expanded="false"
+            aria-controls="layer2-body"
+            disabled
+          >
+            <span class="accordion-badge" id="layer2-badge">🔒</span>
+            <span class="accordion-copy">
+              <strong>Layer 2 terminal</strong>
+              <small class="locked-copy">Locked — finish layer 1 first</small>
+              <small class="unlocked-copy">Use the layer 1 order</small>
+            </span>
+            <span class="accordion-chevron">▾</span>
+          </button>
+          <div class="accordion-body" id="layer2-body">
+            <div class="layer-banner layer1-sequence-display hidden" id="layer1-sequence-display">
+              <div class="label">Use this order from layer 1</div>
               <div class="sequence" id="layer1-sequence-text"></div>
             </div>
-            <div class="progress-bar">
-              <div class="progress-fill" id="progress-fill"></div>
+            <div class="terminal-layout">
+              <div class="primary-panel">
+                <div class="panel">
+                  <div class="panel-title">
+                    <span>Grid</span>
+                    <span>8 x 8</span>
+                  </div>
+                  <p class="compact-copy">
+                    Change the numbers of the layer 1 order to find the new
+                    cells. Then type the hidden word.
+                  </p>
+                  <div class="crypto-grid" id="layer2-grid"></div>
+                </div>
+              </div>
+              <div class="sidebar-panel">
+                <div class="panel">
+                  <div class="panel-title">
+                    <span>Hint</span>
+                    <span>Layer 2</span>
+                  </div>
+                  <div class="hint" id="layer2-hint">
+                    <strong>‼️ LAYER 2:</strong> You have a limited number of
+                    wrong clicks. Use the layer 1 order..
+                  </div>
+                  <div id="layer2-status" class="status layer-status"></div>
+                  <div class="progress-bar">
+                    <div class="progress-fill" id="layer2-progress-fill"></div>
+                  </div>
+                  <div class="input-group" id="layer2-group">
+                    <input
+                      type="text"
+                      id="layer2"
+                      placeholder="Type the hidden word (letters only)..."
+                    />
+                    <button type="button" onclick="checkLayer2()">Check</button>
+                  </div>
+                </div>
+                <div id="reveal" class="hidden">
+                  <div class="status success success-card">
+                    <div>
+                      <h3>🎉 ACCESS GRANTED! 🎉</h3>
+                      <p>Segment 3/5: <strong class="seg">CRYPTO</strong></p>
+                      <p>You opened the lock. Well done!</p>
+                      <a
+                        id="open-vault"
+                        href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                        target="_blank"
+                      >
+                        <button type="button">Open the next room</button>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="panel">
-            <div class="panel-title">
-              <span>Your answer</span>
-              <span>Layer 1</span>
-            </div>
-            <div class="input-section">
-              <div class="input-group">
-                <input
-                  type="text"
-                  id="layer1"
-                  placeholder="Type the cells you found, for example A1 B2..."
-                />
-                <button onclick="checkLayer1()">Check</button>
-              </div>
-
-              <div class="input-group hidden" id="layer2-group">
-                <input
-                  type="text"
-                  id="layer2"
-                  placeholder="Type the hidden word (letters only)..."
-                />
-                <button onclick="checkLayer2()">Check</button>
-              </div>
-
-              <div class="input-group hidden" id="layer3-group">
-                <input
-                  type="text"
-                  id="layer3"
-                  placeholder="Type confirm to finish..."
-                />
-                <button onclick="checkLayer3()">Finish</button>
-              </div>
-            </div>
-          </div>
-
-          <div id="reveal" class="hidden">
-            <div class="status success success-card">
-              <div>
-                <h3>🎉 ACCESS GRANTED! 🎉</h3>
-                <p>Segment 3/5: <strong class="seg">CRYPTO</strong></p>
-                <p>You opened the lock. Well done!</p>
-                <a
-                  id="open-vault"
-                  href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-                  target="_blank"
-                >
-                  <button>Open the next room</button>
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
+        </section>
       </div>
     </div>
 

@@ -273,7 +273,9 @@ class CryptoGrid {
   isSequenceFound() {
     if (this.placementType === "random") {
       // Check if all target values are revealed AND no extra cells are revealed
-      const revealedCells = document.querySelectorAll(".crypto-cell.revealed");
+      const revealedCells = this.gridElement.querySelectorAll(
+        ".crypto-cell.revealed"
+      );
       const revealedValues = Array.from(revealedCells).map(
         (cell) => cell.dataset.value
       );
@@ -289,7 +291,9 @@ class CryptoGrid {
       return allTargetsRevealed && noExtraCells;
     } else if (this.placementType === "coordinated") {
       // Check if all target coordinates are revealed AND no extra cells are revealed
-      const revealedCells = document.querySelectorAll(".crypto-cell.revealed");
+      const revealedCells = this.gridElement.querySelectorAll(
+        ".crypto-cell.revealed"
+      );
       const revealedCoords = Array.from(revealedCells).map(
         (cell) => cell.dataset.coord
       );
@@ -311,12 +315,12 @@ class CryptoGrid {
   getRevealedTargetValues() {
     if (this.placementType === "random") {
       return this.targetSequence.filter((value) => {
-        const cells = document.querySelectorAll(".crypto-cell.revealed");
+        const cells = this.gridElement.querySelectorAll(".crypto-cell.revealed");
         return Array.from(cells).some((cell) => cell.dataset.value === value);
       });
     } else if (this.placementType === "coordinated") {
       return this.targetCoords.filter((coord) => {
-        const cell = document.querySelector(`[data-coord="${coord}"]`);
+        const cell = this.gridElement.querySelector(`[data-coord="${coord}"]`);
         return cell && cell.classList.contains("revealed");
       });
     }
@@ -346,7 +350,7 @@ const MAX_LAYER2_CLICKS = 8; // Maximum clicks allowed for layer 2
 function initCryptoGrid(gridType = "layer1") {
   if (gridType === "layer1") {
     // Initialize layer 1 grid
-    layer1Grid = new CryptoGrid("crypto-grid");
+    layer1Grid = new CryptoGrid("layer1-grid");
 
     // Set up layer 1 data
     const sequentialPattern = ["A1", "B2", "C3", "D4", "E5", "F6", "G7", "H8"];
@@ -384,7 +388,7 @@ function initCryptoGrid(gridType = "layer1") {
     layer1Grid.render();
   } else if (gridType === "layer2") {
     // Initialize layer 2 grid
-    layer2Grid = new CryptoGrid("crypto-grid");
+    layer2Grid = new CryptoGrid("layer2-grid");
 
     // Configure layer 2 grid
     layer2Grid.setTargetSequence(
@@ -399,50 +403,37 @@ function initCryptoGrid(gridType = "layer1") {
 
 // Function to switch to the second grid (crypto word grid) - now simplified
 function switchToCryptoGrid() {
-  // Reset click counter for layer 2
   layer2ClickCount = 0;
 
-  // Add visual transition effect for layer 2
-  const terminal = document.querySelector(".terminal");
-  const layerIndicator = document.getElementById("layer-indicator");
-  
-  // Create a flash effect when entering layer 2
-  terminal.style.transition = "all 0.5s ease";
-  terminal.style.transform = "scale(1.02)";
-  setTimeout(() => {
-    terminal.style.transform = "scale(1)";
-  }, 500);
-
   initCryptoGrid("layer2");
-  updateLayerIndicator(2);
+  showLayer1Order();
+  markLayerComplete(1);
+
+  const layer2Item = getLayerItem(2);
+  if (layer2Item) {
+    layer2Item.classList.add("theme-red");
+    layer2Item.style.transition = "all 0.5s ease";
+    layer2Item.style.transform = "scale(1.01)";
+    setTimeout(() => {
+      layer2Item.style.transform = "scale(1)";
+    }, 500);
+  }
+
+  openUnlockedLayer(2);
+  const layer1Input = document.getElementById("layer1");
+  if (layer1Input) layer1Input.disabled = true;
   showStatus(
-    "Layer 2 is open. Find the hidden word. You have 8 wrong clicks.",
+    "Layer 2 is open. Use the layer 1 result. You have 8 wrong clicks.",
     "success"
   );
-  document.getElementById("layer2-group").classList.remove("hidden");
-  
-  // Show layer 1 sequence display
-  const sequenceDisplay = document.getElementById("layer1-sequence-display");
-  const sequenceText = document.getElementById("layer1-sequence-text");
-  if (sequenceDisplay && sequenceText && window.sequentialPattern) {
-    sequenceText.textContent = window.sequentialPattern.join("  ");
-    sequenceDisplay.classList.remove("hidden");
-  }
-  
-  // Add entrance animation to layer indicator
-  if (layerIndicator) {
-    layerIndicator.style.animation = "none";
-    setTimeout(() => {
-      layerIndicator.style.animation = "layer2-pulse 1.5s ease-in-out infinite";
-    }, 10);
-  }
 }
 
 // Function to update progress for crypto grid
 function updateCryptoProgress() {
   if (layer2Grid) {
     const progress = layer2Grid.getProgressPercentage();
-    const progressFill = document.getElementById("progress-fill");
+    const progressFill = document.getElementById("layer2-progress-fill");
+    if (!progressFill) return;
     progressFill.style.width = progress + "%";
     progressFill.classList.add("layer2"); // Add red theme
 
@@ -464,36 +455,39 @@ function updateProgress() {
       if (!document.querySelector('[data-progress="step1"]')) {
         updateHint(2);
         document
-          .querySelector(".crypto-grid")
+          .getElementById("layer1-grid")
           .setAttribute("data-progress", "step1");
       }
     }
 
     const progressFill = document.getElementById("progress-fill");
-    progressFill.style.width = progress + "%";
-    progressFill.classList.remove("layer2"); // Remove red theme for layer 1
+    if (progressFill) {
+      progressFill.style.width = progress + "%";
+      progressFill.classList.remove("layer2");
+    }
   }
 }
 
 function updateHint(hintID) {
-  const hintElement = document.getElementById("current-hint");
-  const hints = {
+  const layer1Hint = document.getElementById("current-hint");
+  const layer2Hint = document.getElementById("layer2-hint");
+  const layer1Hints = {
     1: "<strong>🔍 START:</strong> Open cells in the grid. Keep only the cells that follow a simple order. Close the rest.",
     2: "<strong>PATTERN FOUND:</strong> You found a pattern. Type that order below to continue.",
     3: "<strong>DONE:</strong> This layer is finished.",
+  };
+  const layer2Hints = {
     4: "<strong>WORD FOUND:</strong> You found the hidden word. Type it below.",
-    5: "<strong>‼️ LAYER 2:</strong> You now have a limited number of wrong clicks. The cells changed. Not all hints are on this page. Also look in the console (F12).",
+    5: "<strong>‼️ LAYER 2:</strong> You now have a limited number of wrong clicks. Use the layer 1 order. Also look in the console (F12).",
     6: "<strong>🔍 NEED HELP:</strong> Change the numbers from layer 1. Open the console (F12) and type help().",
   };
 
-  if (hints[hintID]) {
-    hintElement.innerHTML = hints[hintID];
-    // Add high-alert class for pulsing animation when hint 5 is shown
-    if (hintID === 5) {
-      hintElement.classList.add("high-alert");
-    } else {
-      hintElement.classList.remove("high-alert");
-    }
+  if (layer1Hints[hintID] && layer1Hint) {
+    layer1Hint.innerHTML = layer1Hints[hintID];
+  }
+  if (layer2Hints[hintID] && layer2Hint) {
+    layer2Hint.innerHTML = layer2Hints[hintID];
+    layer2Hint.classList.toggle("high-alert", hintID === 5 || hintID === 6);
   }
 }
 
@@ -508,25 +502,13 @@ function checkLayer1() {
     // Switch to the crypto grid
     setTimeout(() => {
       switchToCryptoGrid();
-      showStatus("Layer 2 is now active.", "success");
-      document.getElementById("layer2-group").classList.remove("hidden");
       updateHint(5);
-      const progressFill = document.getElementById("progress-fill");
-      progressFill.style.width = 0 + "%";
-      const terminal = document.querySelector(".terminal");
-      terminal.classList.add("red");
-      
-      // Add a visual flash to emphasize layer 2 entry
-      setTimeout(() => {
-        terminal.style.boxShadow = "0 0 40px rgba(255, 0, 0, 1)";
-        setTimeout(() => {
-          terminal.style.boxShadow = "";
-        }, 500);
-      }, 100);
-    }, 2000);
+      const progressFill = document.getElementById("layer2-progress-fill");
+      if (progressFill) progressFill.style.width = "0%";
+    }, 900);
   } else {
     showStatus(
-      "That is not the right order. Try again, like A1 B2 C3...",
+      "That is not the right order. Try again",
       "error"
     );
   }
@@ -540,9 +522,16 @@ function checkLayer2() {
     const expected = "cryptolk";
 
     if (input === expected) {
-      showStatus("Correct! Type confirm to finish.", "success");
-      updateLayerIndicator(3);
-      document.getElementById("layer3-group").classList.remove("hidden");
+      const layer2Item = getLayerItem(2);
+      if (layer2Item) layer2Item.classList.add("complete");
+      const badge = document.getElementById("layer2-badge");
+      if (badge) badge.textContent = "✓";
+      const layer2Input = document.getElementById("layer2");
+      if (layer2Input) layer2Input.disabled = true;
+      showStatus("Correct! You opened the lock.", "success");
+      document.getElementById("reveal").classList.remove("hidden");
+      document.getElementById("open-vault").href = atob(CONFIG.NEXT_URL);
+      document.querySelector(".seg").textContent = atob(CONFIG.segmentReveal);
     } else if (/\d/.test(input)) {
       showStatus("Do not use numbers. Take them out.", "error");
     } else {
@@ -553,42 +542,109 @@ function checkLayer2() {
   }
 }
 
-function checkLayer3() {
-  const input = document.getElementById("layer3").value.trim().toLowerCase();
-
-  // Final confirmation - any confirmation word
-  const expected = "confirm";
-
-  if (input === expected) {
-    showStatus("🎉 All layers done! Access granted!", "success");
-    document.getElementById("reveal").classList.remove("hidden");
-    document.getElementById("open-vault").href = atob(CONFIG.NEXT_URL);
-    document.querySelector(".seg").textContent = atob(CONFIG.segmentReveal);
-  } else {
-    throw new Error("Type the word confirm.");
-  }
-}
-
 function showStatus(message, type) {
-  const status = document.getElementById("status");
+  document.querySelectorAll(".layer-status").forEach((el) => {
+    if (el.classList.contains("success-card")) return;
+    el.textContent = "";
+    el.className = "status layer-status";
+  });
+  const openItem = getOpenLayerItem();
+  const status =
+    (openItem && openItem.querySelector(".layer-status")) ||
+    document.getElementById("status");
+  if (!status) return;
   status.textContent = message;
-  status.className = `status ${type}`;
+  status.className = `status layer-status ${type}`;
 }
 
-// Function to update layer indicator
-function updateLayerIndicator(layer) {
-  const layerIndicator = document.getElementById("layer-indicator");
-  if (layerIndicator) {
-    layerIndicator.textContent = `Layer ${layer}`;
-    layerIndicator.className = `layer-indicator layer-${layer}`;
+function getLayerItem(layer) {
+  return document.getElementById(`layer${layer}-item`);
+}
+
+function getOpenLayerItem() {
+  return document.querySelector(".accordion-item.open, .terminal.open");
+}
+
+function setLayerOpen(layer, open) {
+  const item = getLayerItem(layer);
+  if (!item) return;
+  item.classList.toggle("open", open);
+  const header = item.querySelector(".accordion-header");
+  if (header) header.setAttribute("aria-expanded", open ? "true" : "false");
+}
+
+function setLayerLocked(layer, locked) {
+  const item = getLayerItem(layer);
+  if (!item) return;
+  item.classList.toggle("locked", locked);
+  item.classList.toggle("unlocked", !locked);
+  const header = item.querySelector(".accordion-header");
+  if (header) {
+    header.disabled = locked;
+    header.setAttribute("aria-disabled", locked ? "true" : "false");
   }
+  const badge = document.getElementById(`layer${layer}-badge`);
+  if (badge && !item.classList.contains("complete")) {
+    badge.textContent = locked ? "🔒" : String(layer);
+  }
+}
+
+function markLayerComplete(layer) {
+  const item = getLayerItem(layer);
+  if (!item) return;
+  item.classList.add("complete");
+  const badge = document.getElementById(`layer${layer}-badge`);
+  if (badge) badge.textContent = "✓";
+  setLayerOpen(layer, false);
+}
+
+function openUnlockedLayer(layer) {
+  document.querySelectorAll(".accordion-item").forEach((item) => {
+    item.classList.remove("open");
+    const header = item.querySelector(".accordion-header");
+    if (header) header.setAttribute("aria-expanded", "false");
+  });
+  setLayerLocked(layer, false);
+  setLayerOpen(layer, true);
+}
+
+function showLayer1Order() {
+  if (!window.sequentialPattern) return;
+  const order = window.sequentialPattern.join("  ");
+  const headerOrder = document.getElementById("layer1-header-order");
+  if (headerOrder) {
+    headerOrder.textContent = order;
+    headerOrder.classList.add("has-value");
+  }
+  const sequenceText = document.getElementById("layer1-sequence-text");
+  const sequenceDisplay = document.getElementById("layer1-sequence-display");
+  if (sequenceText && sequenceDisplay) {
+    sequenceText.textContent = order;
+    sequenceDisplay.classList.remove("hidden");
+  }
+}
+
+function initAccordion() {
+  document.querySelectorAll(".accordion-header").forEach((header) => {
+    header.addEventListener("click", () => {
+      const item = header.closest(".accordion-item");
+      if (!item || item.classList.contains("locked") || header.disabled) return;
+      const layer = Number(item.id.replace("layer", "").replace("-item", ""));
+      if (!layer) return;
+      if (item.classList.contains("open")) {
+        setLayerOpen(layer, false);
+      } else {
+        openUnlockedLayer(layer);
+      }
+    });
+  });
 }
 
 // Initialize everything
 document.addEventListener("DOMContentLoaded", () => {
   createMatrixEffect();
   initCryptoGrid(); // Default to layer1
-  updateLayerIndicator(1); // Set initial layer indicator
+  initAccordion();
 
   // Allow Enter key to submit
   document.getElementById("layer1").addEventListener("keypress", (e) => {
@@ -597,9 +653,6 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("layer2").addEventListener("keypress", (e) => {
     if (e.key === "Enter") checkLayer2();
   });
-  document.getElementById("layer3").addEventListener("keypress", (e) => {
-    if (e.key === "Enter") checkLayer3();
-  });
 
   // Add cryptic console hints
   console.log(
@@ -607,7 +660,7 @@ document.addEventListener("DOMContentLoaded", () => {
     "color: #00ff00; font-size: 20px; font-weight: bold;"
   );
   console.log(
-    "%cType help() here for extra help",
+    "%cType 'help()' here for extra help",
     "color: #00aa00; font-size: 14px;"
   );
 
@@ -626,7 +679,7 @@ document.addEventListener("DOMContentLoaded", () => {
       "color: #ff0000;"
     );
     console.log(
-      "%c3. Layer 2: The open cells hide a word. Remove the numbers.",
+      "%c3. Layer 2: The open cells hide a word.",
       "color: #ff0000;"
     );
     console.log(
@@ -692,14 +745,11 @@ function showCrypticHint() {
 
 // Function to get current layer
 function getCurrentLayer() {
-  if (
-    layer2Grid &&
-    document.getElementById("layer2-group").classList.contains("hidden") ===
-      false
-  ) {
-    return 2;
-  } else if (layer1Grid) {
+  if (document.getElementById("layer1-item")?.classList.contains("open")) {
     return 1;
+  }
+  if (document.getElementById("layer2-item")?.classList.contains("unlocked")) {
+    return 2;
   }
   return 1;
 }
@@ -751,10 +801,6 @@ function revealAllHints() {
   );
   console.log(
     "%cLayer 2 word: cryptolk",
-    "color: #ffaa00; font-weight: bold;"
-  );
-  console.log(
-    "%cLast step: type confirm",
     "color: #ffaa00; font-weight: bold;"
   );
 
