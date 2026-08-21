@@ -478,7 +478,7 @@ function updateHint(hintID) {
   };
   const layer2Hints = {
     4: "<strong>WORD FOUND:</strong> You found the hidden word. Type it below.",
-    5: "<strong>‼️ LAYER 2:</strong> You now have a limited number of wrong clicks. Use the layer 1 order. Also look in the console (F12).",
+    5: "<strong>‼️ LAYER 2:</strong> You now have a limited number of wrong clicks. Transform the numbers from layer 1.",
     6: "<strong>🔍 NEED HELP:</strong> Change the numbers from layer 1. Open the console (F12) and type help().",
   };
 
@@ -691,7 +691,7 @@ document.addEventListener("DOMContentLoaded", () => {
   window.hint = function (id) {
     if (id === 3) throw new Error("Do not use numbers. Take them out.");
     const hints = {
-      1: "Click cells in the grid. Keep only the ones that go in order, like A1, B2, C3. Close the other cells.",
+      1: "Click cells in the grid. Keep only the ones that go in order. Close the other cells.",
       2: `Change the numbers of the layer 1 cells: ${window.transformationHints.join(", ")}`,
     };
     console.log("%c" + hints[id], "color: #ffaa00; font-weight: bold;");
@@ -730,7 +730,7 @@ function showCrypticHint() {
   const currentLayer = getCurrentLayer();
   if (currentLayer != 1) return;
   const crypticHints = {
-    1: "Look at the letters in order: A, then B, then C... and match them with numbers that also go up.",
+    1: "Look at the letters in order.",
   };
 
   const hintElement = document.getElementById("current-hint");
@@ -792,7 +792,7 @@ function revealAllHints() {
     "color: #ff0000; font-size: 16px; font-weight: bold;"
   );
   console.log(
-    "%cLayer 1: Click A1, B2, C3, D4, E5, F6, G7, H8",
+    "%cLayer 1: Find the order: A1, B2, C3, D4, E5, F6, G7, H8",
     "color: #ffaa00; font-weight: bold;"
   );
   console.log(
